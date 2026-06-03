@@ -20,4 +20,4 @@ Ver [PUSH.md](PUSH.md) para subir cambios a [github.com/vanessaquirosv/vanequiro
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE) en el repositorio remoto.
+MIT — ver [LICENSE](LICENSE).
