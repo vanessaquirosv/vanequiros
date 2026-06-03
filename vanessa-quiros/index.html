@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vanessa Quirós — Coach Ontológica</title>
+  <meta name="description" content="Transformación personal, apoyo al propósito y rifa benéfica de Vanessa Quirós.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+          },
+          colors: {
+            dusty: '#B18588',
+            blush: '#E8C5C8',
+            ivory: '#FAF7F2',
+            rosegold: '#B76E79',
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    .modal-open { overflow: hidden; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAF7F2] font-sans text-neutral-800 antialiased pb-32 md:pb-8">
+
+  <!-- Floating Nav -->
+  <nav class="fixed top-0 left-0 right-0 z-40 bg-[#FAF7F2]/90 backdrop-blur-md border-b border-[#E8C5C8]/50">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="../index.html" class="text-xs text-[#B18588] hover:text-[#B76E79] transition-colors">&larr; Inicio</a>
+      <ul class="flex gap-4 sm:gap-8 text-xs sm:text-sm font-medium">
+        <li><a href="#historia" class="text-neutral-600 hover:text-[#B18588] transition-colors">Mi Historia</a></li>
+        <li><a href="#donar" class="text-neutral-600 hover:text-[#B18588] transition-colors">Donar Directo</a></li>
+        <li><a href="#rifa" class="text-neutral-600 hover:text-[#B18588] transition-colors">Rifa Benéfica</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="pt-24 pb-16 px-6 text-center max-w-3xl mx-auto">
+    <div class="mb-8 flex justify-center">
+      <img
+        src="../img/VQ background t.png"
+        alt="Vanessa Quirós - Coach Ontológica"
+        width="400"
+        height="400"
+        fetchpriority="high"
+        decoding="async"
+        class="block w-56 h-auto sm:w-72 md:w-80 max-w-full object-contain drop-shadow-md"
+      />
+    </div>
+    <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-[#B18588]">Vanessa Quirós</h1>
+    <p class="mt-2 text-sm uppercase tracking-[0.25em] text-[#B76E79]">Futura Coach Ontológica</p>
+    <p class="mt-6 font-serif text-xl sm:text-2xl italic text-neutral-700">Cocreando un futuro</p>
+    <p class="mt-3 text-neutral-600">Tu apoyo expande este propósito</p>
+  </header>
+
+  <!-- Historia -->
+  <section id="historia" class="px-6 py-16 bg-white">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="font-serif text-3xl text-[#B18588] text-center mb-10">Mi Historia y Trayectoria</h2>
+
+      <!-- ESPACIO RESERVADO PARA EL TEXTO OFICIAL DE TRAYECTORIA DE VANESSA QUIRÓS -->
+
+      <div class="font-serif text-lg leading-[1.9] text-neutral-700 space-y-6">
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p>
+          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
+        <p>
+          Curabitur pretium tincidunt lacus. Nulla facilisi. Ut fringilla. Suspendisse potenti. Nunc feugiat mi a tellus consequat imperdiet. Vestibulum sapien proin quam etiam ultricies.
+        </p>
+        <p>
+          Proin quam. Etiam ultrices. Suspendisse in justo eu magna luctus suscipit. Sed lectus. Integer euismod lacus luctus magna. Quisque cursus, metus vitae pharetra auctor, sem massa mattis sem.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Donación Voluntaria -->
+  <section id="donar" class="px-6 py-16">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="font-serif text-3xl text-[#B18588] text-center mb-3">Apoyo al Propósito</h2>
+      <p class="text-center text-neutral-600 mb-10 text-sm sm:text-base">
+        Tu contribución voluntaria impulsa esta visión de transformación. Elige un monto sugerido o define el tuyo.
+      </p>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-[#E8C5C8]/40 p-6 sm:p-8">
+        <p class="text-sm font-medium text-neutral-700 mb-4">Montos sugeridos</p>
+        <div class="grid grid-cols-3 gap-3 mb-6" id="donation-amounts">
+          <button type="button" data-amount="5000"
+            class="donation-quick rounded-xl border-2 border-[#E8C5C8] py-4 text-center font-semibold text-[#B18588] hover:bg-[#E8C5C8]/30 transition-colors">
+            ₡5,000
+          </button>
+          <button type="button" data-amount="10000"
+            class="donation-quick rounded-xl border-2 border-[#E8C5C8] py-4 text-center font-semibold text-[#B18588] hover:bg-[#E8C5C8]/30 transition-colors">
+            ₡10,000
+          </button>
+          <button type="button" data-amount="20000"
+            class="donation-quick rounded-xl border-2 border-[#E8C5C8] py-4 text-center font-semibold text-[#B18588] hover:bg-[#E8C5C8]/30 transition-colors">
+            ₡20,000
+          </button>
+        </div>
+
+        <label for="custom-amount" class="block text-sm font-medium text-neutral-700 mb-2">Monto Personalizado</label>
+        <div class="relative mb-6">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-[#B18588] font-medium">₡</span>
+          <input type="number" id="custom-amount" min="1" step="100" placeholder="0"
+            class="w-full rounded-xl border border-[#E8C5C8] pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#B18588]/40 focus:border-[#B18588]">
+        </div>
+
+        <p class="text-center text-sm text-neutral-500 mb-4">
+          Monto seleccionado: <span id="donation-display" class="font-semibold text-[#B76E79]">₡0</span>
+        </p>
+
+        <button type="button" id="btn-donation-pay"
+          class="w-full rounded-xl bg-[#B18588] py-4 text-white font-semibold hover:bg-[#B76E79] transition-colors shadow-sm">
+          Realizar Apoyo
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rifa Benéfica -->
+  <section id="rifa" class="px-4 sm:px-6 py-16 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-serif text-3xl text-[#B18588] text-center mb-8">Rifa Benéfica</h2>
+
+      <!-- Instructions Banner -->
+      <aside class="mb-10 rounded-2xl border border-[#E8C5C8] bg-[#FAF7F2] p-5 sm:p-8">
+        <h3 class="font-serif text-xl text-[#B18588] mb-4">¿Cómo funciona nuestra rifa?</h3>
+        <p class="text-sm sm:text-base text-neutral-700 leading-relaxed mb-4">
+          El sorteo se rige por los resultados de la <strong>Lotería Nacional de la JPS</strong>. El ganador se determina combinando el <strong>Primer Dígito de la Serie</strong> (indica la cuadrícula) y el <strong>Número Premiado</strong> (del 00 al 99).
+        </p>
+        <ul class="text-sm sm:text-base text-neutral-700 space-y-2 list-disc list-inside mb-4">
+          <li><strong>Las Cuadrículas (0 al 9):</strong> Representan la centena o primer dígito de la serie.</li>
+          <li><strong>Los Números (00 al 99):</strong> Representan el número premiado.</li>
+        </ul>
+        <p class="text-sm sm:text-base text-neutral-600 italic border-l-4 border-[#B76E79] pl-4">
+          <em>Ejemplo:</em> Si el premio mayor es el Número <strong>45</strong> con la Serie <strong>345</strong>, el boleto ganador absoluto será el <strong>45 de la Cuadrícula 3</strong> (Boleto #345). ¡Hay 1000 números en total (del 000 al 999)!
+        </p>
+      </aside>
+
+      <!-- Grid Tabs -->
+      <div class="mb-4">
+        <p class="text-sm font-medium text-neutral-600 mb-3 text-center">Selecciona tu cuadrícula (Serie)</p>
+        <div id="grid-tabs" class="flex flex-wrap justify-center gap-1.5 sm:gap-2" role="tablist" aria-label="Cuadrículas de rifa">
+          <!-- Tabs 0-9 rendered by JS -->
+        </div>
+      </div>
+
+      <p id="active-grid-label" class="text-center text-sm text-[#B76E79] font-medium mb-4">Cuadrícula 0 — Serie 0XX</p>
+
+      <!-- 10x10 Matrix -->
+      <div id="number-grid" class="grid grid-cols-10 gap-0.5 sm:gap-1 max-w-lg mx-auto" role="grid" aria-label="Números de rifa">
+        <!-- Buttons rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-6 py-10 text-center text-sm text-neutral-500 border-t border-[#E8C5C8]/40 mt-8">
+    <p>&copy; <span id="year"></span> Vanessa Quirós. Todos los derechos reservados.</p>
+    <a href="../index.html" class="inline-block mt-2 text-[#B18588] hover:text-[#B76E79]">Volver al portal principal</a>
+  </footer>
+
+  <!-- Floating Cart -->
+  <aside id="cart-panel"
+    class="fixed bottom-0 left-0 right-0 z-50 md:bottom-6 md:left-auto md:right-6 md:w-96 bg-white rounded-t-2xl md:rounded-2xl shadow-2xl border border-[#E8C5C8] transform translate-y-full md:translate-y-0 transition-transform duration-300"
+    aria-label="Carrito de boletos">
+    <div class="p-4 sm:p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold text-[#B18588]">Tu selección</h3>
+        <button type="button" id="cart-toggle-mobile" class="md:hidden text-neutral-400 hover:text-[#B18588]" aria-label="Cerrar carrito">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <ul id="cart-list" class="max-h-32 overflow-y-auto text-sm text-neutral-600 space-y-1 mb-3 empty:hidden">
+        <!-- Ticket items -->
+      </ul>
+      <p id="cart-empty" class="text-sm text-neutral-400 mb-3">No has seleccionado boletos aún.</p>
+      <div class="flex justify-between text-sm mb-4">
+        <span>Boletos: <strong id="cart-count">0</strong></span>
+        <span>Total: <strong id="cart-total" class="text-[#B76E79]">₡0</strong></span>
+      </div>
+      <button type="button" id="btn-checkout" disabled
+        class="w-full rounded-xl bg-[#B18588] py-3 text-white font-semibold hover:bg-[#B76E79] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        Proceder al Pago
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile cart FAB -->
+  <button type="button" id="cart-fab"
+    class="fixed bottom-4 right-4 z-40 md:hidden flex items-center gap-2 rounded-full bg-[#B18588] text-white px-4 py-3 shadow-lg"
+    aria-label="Ver carrito">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+    <span id="fab-count" class="text-sm font-bold">0</span>
+  </button>
+
+  <!-- Donation Payment Modal -->
+  <div id="modal-donation" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="modal-donation-title">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" data-close-modal="donation"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+      <div class="pointer-events-auto bg-white rounded-2xl shadow-xl max-w-md w-full p-6 sm:p-8 border border-[#E8C5C8]">
+        <h3 id="modal-donation-title" class="font-serif text-2xl text-[#B18588] mb-4">Datos de Pago</h3>
+        <p class="text-sm text-neutral-600 mb-6">Realiza tu transferencia con los siguientes datos:</p>
+        <div class="space-y-4 text-sm">
+          <div class="rounded-xl bg-[#FAF7F2] p-4 border border-[#E8C5C8]/50">
+            <p class="font-semibold text-[#B18588] mb-1">SINPE Móvil</p>
+            <p class="text-neutral-700">8888-8888</p>
+            <p class="text-neutral-500 text-xs mt-1">A nombre de: Vanessa Quirós</p>
+          </div>
+          <div class="rounded-xl bg-[#FAF7F2] p-4 border border-[#E8C5C8]/50">
+            <p class="font-semibold text-[#B18588] mb-1">Transferencia Bancaria</p>
+            <p class="text-neutral-700">IBAN: CR00 0000 0000 0000 0000 00</p>
+            <p class="text-neutral-500 text-xs mt-1">Banco: [Nombre del banco]</p>
+          </div>
+        </div>
+        <button type="button" data-close-modal="donation"
+          class="mt-6 w-full rounded-xl border border-[#E8C5C8] py-3 font-medium text-[#B18588] hover:bg-[#FAF7F2] transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Raffle Checkout Modal -->
+  <div id="modal-checkout" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="modal-checkout-title">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" data-close-modal="checkout"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto pointer-events-none">
+      <div class="pointer-events-auto bg-white rounded-2xl shadow-xl max-w-md w-full p-6 sm:p-8 border border-[#E8C5C8] my-8">
+        <h3 id="modal-checkout-title" class="font-serif text-2xl text-[#B18588] mb-2">Confirmar Compra</h3>
+        <p class="text-sm text-neutral-600 mb-4">Completa tus datos y realiza el pago por SINPE Móvil.</p>
+
+        <div id="checkout-summary" class="rounded-xl bg-[#FAF7F2] p-4 mb-6 text-sm max-h-28 overflow-y-auto"></div>
+
+        <form id="checkout-form" class="space-y-4">
+          <div>
+            <label for="checkout-name" class="block text-sm font-medium text-neutral-700 mb-1">Nombre completo</label>
+            <input type="text" id="checkout-name" required
+              class="w-full rounded-lg border border-[#E8C5C8] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B18588]/40">
+          </div>
+          <div>
+            <label for="checkout-phone" class="block text-sm font-medium text-neutral-700 mb-1">Teléfono</label>
+            <input type="tel" id="checkout-phone" required
+              class="w-full rounded-lg border border-[#E8C5C8] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B18588]/40">
+          </div>
+          <div>
+            <label for="checkout-instagram" class="block text-sm font-medium text-neutral-700 mb-1">Instagram</label>
+            <input type="text" id="checkout-instagram" placeholder="@usuario"
+              class="w-full rounded-lg border border-[#E8C5C8] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[#B18588]/40">
+          </div>
+
+          <div class="rounded-xl bg-[#FAF7F2] p-4 border border-[#E8C5C8]/50">
+            <p class="font-semibold text-[#B18588] text-sm mb-1">SINPE Móvil para pago</p>
+            <p class="text-neutral-700">8888-8888</p>
+            <p class="text-neutral-500 text-xs mt-1">A nombre de: Vanessa Quirós</p>
+            <p class="text-[#B76E79] font-semibold mt-2 text-sm">Total a pagar: <span id="modal-checkout-total">₡0</span></p>
+          </div>
+
+          <div class="flex gap-3">
+            <button type="button" data-close-modal="checkout"
+              class="flex-1 rounded-xl border border-[#E8C5C8] py-3 font-medium text-[#B18588] hover:bg-[#FAF7F2]">
+              Cancelar
+            </button>
+            <button type="submit"
+              class="flex-1 rounded-xl bg-[#B18588] py-3 text-white font-semibold hover:bg-[#B76E79]">
+              Confirmar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // === STATE ===
+    // =========================================================================
+
+    const TICKET_PRICE = 2000;
+    const VENDIDOS_COUNT = 50;
+
+    /** @type {Array<{id: number, numero: string, serieDigit: number, status: string}>} */
+    let tickets = [];
+
+    let activeSerieDigit = 0;
+    let selectedDonationAmount = 0;
+
+    // =========================================================================
+    // === TICKETS: INIT & SEED ===
+    // =========================================================================
+
+    function buildTickets() {
+      tickets = [];
+      for (let id = 0; id < 1000; id++) {
+        const serieDigit = Math.floor(id / 100);
+        const numero = String(id % 100).padStart(2, '0');
+        tickets.push({ id, numero, serieDigit, status: 'disponible' });
+      }
+      seedVendidos();
+    }
+
+    function seedVendidos() {
+      const indices = new Set();
+      while (indices.size < VENDIDOS_COUNT) {
+        indices.add(Math.floor(Math.random() * 1000));
+      }
+      indices.forEach((i) => {
+        tickets[i].status = 'vendido';
+      });
+    }
+
+    function formatTicketId(id) {
+      return String(id).padStart(3, '0');
+    }
+
+    function getTicketById(id) {
+      return tickets[id];
+    }
+
+    function getSelectedTickets() {
+      return tickets.filter((t) => t.status === 'seleccionado');
+    }
+
+    // =========================================================================
+    // === RENDER: GRID TABS & MATRIX ===
+    // =========================================================================
+
+    function renderTabs() {
+      const container = document.getElementById('grid-tabs');
+      container.innerHTML = '';
+      for (let d = 0; d <= 9; d++) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', d === activeSerieDigit ? 'true' : 'false');
+        btn.dataset.serie = String(d);
+        btn.textContent = String(d);
+        btn.className = getTabClasses(d === activeSerieDigit);
+        btn.addEventListener('click', () => selectTab(d));
+        container.appendChild(btn);
+      }
+    }
+
+    function getTabClasses(isActive) {
+      const base = 'w-9 h-9 sm:w-11 sm:h-11 rounded-lg text-sm sm:text-base font-semibold transition-colors';
+      if (isActive) {
+        return `${base} bg-[#B18588] text-white shadow-md ring-2 ring-[#B76E79]/50`;
+      }
+      return `${base} bg-white border border-[#E8C5C8] text-[#B18588] hover:bg-[#E8C5C8]/40`;
+    }
+
+    function selectTab(serieDigit) {
+      activeSerieDigit = serieDigit;
+      document.getElementById('active-grid-label').textContent =
+        `Cuadrícula ${serieDigit} — Serie ${serieDigit}XX`;
+      renderTabs();
+      renderGrid();
+    }
+
+    function renderGrid() {
+      const grid = document.getElementById('number-grid');
+      grid.innerHTML = '';
+
+      const gridTickets = tickets.filter((t) => t.serieDigit === activeSerieDigit);
+
+      gridTickets.forEach((ticket) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = ticket.numero;
+        btn.dataset.id = String(ticket.id);
+        btn.setAttribute('aria-label', `Boleto ${formatTicketId(ticket.id)}`);
+        btn.className = getNumberButtonClasses(ticket);
+
+        if (ticket.status !== 'vendido') {
+          btn.addEventListener('click', () => toggleTicket(ticket.id));
+        } else {
+          btn.disabled = true;
+        }
+
+        grid.appendChild(btn);
+      });
+    }
+
+    function getNumberButtonClasses(ticket) {
+      const base = 'aspect-square flex items-center justify-center rounded text-[10px] sm:text-sm font-medium transition-colors';
+      switch (ticket.status) {
+        case 'vendido':
+          return `${base} bg-red-50 text-neutral-400 line-through cursor-not-allowed border border-red-100 opacity-70`;
+        case 'seleccionado':
+          return `${base} bg-[#B76E79] text-white border border-[#B18588] shadow-sm`;
+        default:
+          return `${base} bg-white text-neutral-800 border border-[#E8C5C8]/80 hover:bg-[#E8C5C8] cursor-pointer`;
+      }
+    }
+
+    // =========================================================================
+    // === RENDER: CART ===
+    // =========================================================================
+
+    function renderCart() {
+      const selected = getSelectedTickets();
+      const list = document.getElementById('cart-list');
+      const empty = document.getElementById('cart-empty');
+      const countEl = document.getElementById('cart-count');
+      const totalEl = document.getElementById('cart-total');
+      const fabCount = document.getElementById('fab-count');
+      const checkoutBtn = document.getElementById('btn-checkout');
+
+      list.innerHTML = '';
+      if (selected.length === 0) {
+        empty.classList.remove('hidden');
+        list.classList.add('hidden');
+        checkoutBtn.disabled = true;
+      } else {
+        empty.classList.add('hidden');
+        list.classList.remove('hidden');
+        selected
+          .sort((a, b) => a.id - b.id)
+          .forEach((t) => {
+            const li = document.createElement('li');
+            li.textContent = `Boleto #${formatTicketId(t.id)}`;
+            list.appendChild(li);
+          });
+        checkoutBtn.disabled = false;
+      }
+
+      const total = selected.length * TICKET_PRICE;
+      countEl.textContent = String(selected.length);
+      totalEl.textContent = `₡${total.toLocaleString('es-CR')}`;
+      fabCount.textContent = String(selected.length);
+
+      if (selected.length > 0 && window.innerWidth < 768) {
+        document.getElementById('cart-panel').classList.remove('translate-y-full');
+      }
+    }
+
+    // =========================================================================
+    // === EVENTS: TICKETS ===
+    // =========================================================================
+
+    function toggleTicket(id) {
+      const ticket = getTicketById(id);
+      if (!ticket || ticket.status === 'vendido') return;
+
+      if (ticket.status === 'seleccionado') {
+        ticket.status = 'disponible';
+      } else {
+        ticket.status = 'seleccionado';
+      }
+
+      renderGrid();
+      renderCart();
+    }
+
+    // =========================================================================
+    // === EVENTS: DONATION ===
+    // =========================================================================
+
+    function updateDonationDisplay() {
+      document.getElementById('donation-display').textContent =
+        `₡${selectedDonationAmount.toLocaleString('es-CR')}`;
+    }
+
+    function initDonation() {
+      document.querySelectorAll('.donation-quick').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          selectedDonationAmount = Number(btn.dataset.amount);
+          document.getElementById('custom-amount').value = '';
+          document.querySelectorAll('.donation-quick').forEach((b) => {
+            b.classList.remove('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
+          });
+          btn.classList.add('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
+          updateDonationDisplay();
+        });
+      });
+
+      document.getElementById('custom-amount').addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        selectedDonationAmount = isNaN(val) ? 0 : val;
+        document.querySelectorAll('.donation-quick').forEach((b) => {
+          b.classList.remove('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
+        });
+        updateDonationDisplay();
+      });
+
+      document.getElementById('btn-donation-pay').addEventListener('click', () => {
+        if (selectedDonationAmount <= 0) {
+          alert('Por favor selecciona o ingresa un monto.');
+          return;
+        }
+        openModal('donation');
+      });
+    }
+
+    // =========================================================================
+    // === EVENTS: MODALS ===
+    // =========================================================================
+
+    function openModal(name) {
+      const modal = document.getElementById(name === 'donation' ? 'modal-donation' : 'modal-checkout');
+      modal.classList.remove('hidden');
+      document.body.classList.add('modal-open');
+
+      if (name === 'checkout') {
+        const selected = getSelectedTickets();
+        const total = selected.length * TICKET_PRICE;
+        document.getElementById('modal-checkout-total').textContent =
+          `₡${total.toLocaleString('es-CR')}`;
+        document.getElementById('checkout-summary').innerHTML = selected
+          .sort((a, b) => a.id - b.id)
+          .map((t) => `<p>Boleto #${formatTicketId(t.id)} — ₡${TICKET_PRICE.toLocaleString('es-CR')}</p>`)
+          .join('');
+      }
+    }
+
+    function closeModal(name) {
+      const modal = document.getElementById(name === 'donation' ? 'modal-donation' : 'modal-checkout');
+      modal.classList.add('hidden');
+      const anyOpen =
+        !document.getElementById('modal-donation').classList.contains('hidden') ||
+        !document.getElementById('modal-checkout').classList.contains('hidden');
+      if (!anyOpen) document.body.classList.remove('modal-open');
+    }
+
+    function initModals() {
+      document.querySelectorAll('[data-close-modal]').forEach((el) => {
+        el.addEventListener('click', () => closeModal(el.dataset.closeModal));
+      });
+
+      document.getElementById('btn-checkout').addEventListener('click', () => {
+        if (getSelectedTickets().length === 0) return;
+        openModal('checkout');
+      });
+
+      document.getElementById('checkout-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const payload = {
+          nombre: document.getElementById('checkout-name').value.trim(),
+          telefono: document.getElementById('checkout-phone').value.trim(),
+          instagram: document.getElementById('checkout-instagram').value.trim(),
+          boletos: getSelectedTickets().map((t) => ({
+            id: t.id,
+            numero: formatTicketId(t.id),
+          })),
+          total: getSelectedTickets().length * TICKET_PRICE,
+          precioUnitario: TICKET_PRICE,
+        };
+        console.log('[Rifa] Confirmación de compra — listo para API/Firebase:', payload);
+        alert('¡Gracias! Tu solicitud ha sido registrada. Te contactaremos para confirmar el pago.');
+        closeModal('checkout');
+        document.getElementById('checkout-form').reset();
+      });
+    }
+
+    // =========================================================================
+    // === EVENTS: MOBILE CART ===
+    // =========================================================================
+
+    function initMobileCart() {
+      const panel = document.getElementById('cart-panel');
+      const fab = document.getElementById('cart-fab');
+      const closeBtn = document.getElementById('cart-toggle-mobile');
+
+      fab.addEventListener('click', () => {
+        panel.classList.remove('translate-y-full');
+      });
+
+      closeBtn.addEventListener('click', () => {
+        panel.classList.add('translate-y-full');
+      });
+    }
+
+    // =========================================================================
+    // === INIT ===
+    // =========================================================================
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    buildTickets();
+    renderTabs();
+    renderGrid();
+    renderCart();
+    initDonation();
+    initModals();
+    initMobileCart();
+  </script>
+</body>
+</html>

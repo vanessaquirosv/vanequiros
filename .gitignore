@@ -1,0 +1,24 @@
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Secretos y configuración local
+.env
+.env.*
+config.local.js
+firebase-config.local.js
+
+# Logs y caché
+*.log
+npm-debug.log*
+node_modules/
+
+# Cursor / planes locales (no publicar)
+.cursor/
