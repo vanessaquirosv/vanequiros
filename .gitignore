@@ -9,11 +9,17 @@ desktop.ini
 *.swp
 *~
 
-# Secretos y configuración local
+# Secretos y configuración local (NUNCA subir a GitHub)
 .env
 .env.*
 config.local.js
 firebase-config.local.js
+js/web-rifa/firebase-config.js
+**/firebase-config.js
+!js/web-rifa/firebase-config.example.js
+*-firebase-adminsdk-*.json
+serviceAccount*.json
+.firebase/
 
 # Logs y caché
 *.log

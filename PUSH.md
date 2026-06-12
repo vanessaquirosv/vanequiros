@@ -142,13 +142,20 @@ git push origin main
 
 ## 6. Publicar el sitio en línea (GitHub Pages — gratuito)
 
-Tras el primer push exitoso:
+### Opción recomendada: GitHub Actions + secretos Firebase
 
-1. En el repo: **Settings** → **Pages**.
-2. **Build and deployment** → Source: **Deploy from a branch**.
-3. Branch: `main` → carpeta **`/ (root)`** → **Save**.
-4. En 1–3 minutos tendrás una URL como:  
-   `https://vanessaquirosv.github.io/vanequiros/`
+El repo incluye `.github/workflows/deploy-pages.yml`. Las claves Firebase **no** van en el código; se configuran como **GitHub Secrets** (ver [docs/SECRETS.md](docs/SECRETS.md)).
+
+1. Repo → **Settings → Secrets and variables → Actions** → crear los 6 secrets `FIREBASE_*`.
+2. **Settings → Pages** → Source: **GitHub Actions**.
+3. Push a `main` → el workflow genera `firebase-config.js` en el deploy y publica el sitio.
+
+URL esperada: `https://vanessaquirosv.github.io/vanequiros/`
+
+### Opción alternativa: Deploy from branch (sin Firebase en producción)
+
+Si aún no configuras secrets, puedes usar **Deploy from a branch** → `main` → `/ (root)`.  
+La rifa seguirá en modo local hasta integrar Firebase; **no** subas `firebase-config.js` al repo.
 
 ### Rutas importantes
 
@@ -199,7 +206,8 @@ Comprueba que la carpeta `img/` esté en el repo y que la ruta en HTML sea `../i
 
 - [ ] El sitio abre bien en local (doble clic en `index.html` o Live Server).
 - [ ] `vanessa-quiros/index.html` carga el logo desde `img/`.
-- [ ] No se suben contraseñas, tokens ni archivos `.env`.
+- [ ] **`js/web-rifa/firebase-config.js` NO aparece en `git status`** (ver [docs/SECRETS.md](docs/SECRETS.md)).
+- [ ] No se suben contraseñas, tokens, `.env` ni archivos `*-firebase-adminsdk-*.json`.
 - [ ] `git status` muestra solo los archivos que quieres publicar.
 - [ ] Mensaje de commit claro.
 - [ ] `git push origin main` sin errores.

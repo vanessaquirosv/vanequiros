@@ -16,7 +16,12 @@ HTML5, Tailwind CSS (CDN), JavaScript ES6+.
 
 ## Publicación
 
-Ver [PUSH.md](PUSH.md) para subir cambios a [github.com/vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros).
+Ver [PUSH.md](PUSH.md) para subir cambios a GitHub.
+
+## Firebase / rifa (web-rifa)
+
+- Documentación: [docs/WEB-RIFA.md](docs/WEB-RIFA.md)
+- **Secretos y claves privadas:** [docs/SECRETS.md](docs/SECRETS.md) — nunca commitear `js/web-rifa/firebase-config.js`
 
 ## Licencia
 
