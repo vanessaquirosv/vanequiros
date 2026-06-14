@@ -153,6 +153,20 @@
         </p>
       </aside>
 
+      <div id="rifa-loading" class="text-center py-12 text-neutral-500">
+        <p class="animate-pulse">Cargando boletos desde Firebase…</p>
+      </div>
+      <div id="rifa-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-800 text-sm">
+        <p class="font-semibold mb-2">No se pudo cargar la rifa</p>
+        <p id="rifa-error-msg"></p>
+        <p class="mt-3 text-xs text-red-600">Consulta <code>docs/FIREBASE-SETUP.md</code> en el repositorio.</p>
+      </div>
+      <div id="rifa-empty" class="hidden rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-900 text-sm">
+        <p class="font-semibold mb-2">Base de datos sin boletos</p>
+        <p>Ejecuta el seed una vez: abre <a href="../tools/seed-tickets.html" class="underline font-medium">tools/seed-tickets.html</a></p>
+      </div>
+
+      <div id="rifa-content" class="hidden">
       <!-- Grid Tabs -->
       <div class="mb-4">
         <p class="text-sm font-medium text-neutral-600 mb-3 text-center">Selecciona tu cuadrícula (Serie)</p>
@@ -166,6 +180,7 @@
       <!-- 10x10 Matrix -->
       <div id="number-grid" class="grid grid-cols-10 gap-0.5 sm:gap-1 max-w-lg mx-auto" role="grid" aria-label="Números de rifa">
         <!-- Buttons rendered by JS -->
+      </div>
       </div>
     </div>
   </section>
@@ -286,318 +301,6 @@
     </div>
   </div>
 
-  <script>
-    // =========================================================================
-    // === STATE ===
-    // =========================================================================
-
-    const TICKET_PRICE = 2000;
-    const VENDIDOS_COUNT = 50;
-
-    /** @type {Array<{id: number, numero: string, serieDigit: number, status: string}>} */
-    let tickets = [];
-
-    let activeSerieDigit = 0;
-    let selectedDonationAmount = 0;
-
-    // =========================================================================
-    // === TICKETS: INIT & SEED ===
-    // =========================================================================
-
-    function buildTickets() {
-      tickets = [];
-      for (let id = 0; id < 1000; id++) {
-        const serieDigit = Math.floor(id / 100);
-        const numero = String(id % 100).padStart(2, '0');
-        tickets.push({ id, numero, serieDigit, status: 'disponible' });
-      }
-      seedVendidos();
-    }
-
-    function seedVendidos() {
-      const indices = new Set();
-      while (indices.size < VENDIDOS_COUNT) {
-        indices.add(Math.floor(Math.random() * 1000));
-      }
-      indices.forEach((i) => {
-        tickets[i].status = 'vendido';
-      });
-    }
-
-    function formatTicketId(id) {
-      return String(id).padStart(3, '0');
-    }
-
-    function getTicketById(id) {
-      return tickets[id];
-    }
-
-    function getSelectedTickets() {
-      return tickets.filter((t) => t.status === 'seleccionado');
-    }
-
-    // =========================================================================
-    // === RENDER: GRID TABS & MATRIX ===
-    // =========================================================================
-
-    function renderTabs() {
-      const container = document.getElementById('grid-tabs');
-      container.innerHTML = '';
-      for (let d = 0; d <= 9; d++) {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.setAttribute('role', 'tab');
-        btn.setAttribute('aria-selected', d === activeSerieDigit ? 'true' : 'false');
-        btn.dataset.serie = String(d);
-        btn.textContent = String(d);
-        btn.className = getTabClasses(d === activeSerieDigit);
-        btn.addEventListener('click', () => selectTab(d));
-        container.appendChild(btn);
-      }
-    }
-
-    function getTabClasses(isActive) {
-      const base = 'w-9 h-9 sm:w-11 sm:h-11 rounded-lg text-sm sm:text-base font-semibold transition-colors';
-      if (isActive) {
-        return `${base} bg-[#B18588] text-white shadow-md ring-2 ring-[#B76E79]/50`;
-      }
-      return `${base} bg-white border border-[#E8C5C8] text-[#B18588] hover:bg-[#E8C5C8]/40`;
-    }
-
-    function selectTab(serieDigit) {
-      activeSerieDigit = serieDigit;
-      document.getElementById('active-grid-label').textContent =
-        `Cuadrícula ${serieDigit} — Serie ${serieDigit}XX`;
-      renderTabs();
-      renderGrid();
-    }
-
-    function renderGrid() {
-      const grid = document.getElementById('number-grid');
-      grid.innerHTML = '';
-
-      const gridTickets = tickets.filter((t) => t.serieDigit === activeSerieDigit);
-
-      gridTickets.forEach((ticket) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = ticket.numero;
-        btn.dataset.id = String(ticket.id);
-        btn.setAttribute('aria-label', `Boleto ${formatTicketId(ticket.id)}`);
-        btn.className = getNumberButtonClasses(ticket);
-
-        if (ticket.status !== 'vendido') {
-          btn.addEventListener('click', () => toggleTicket(ticket.id));
-        } else {
-          btn.disabled = true;
-        }
-
-        grid.appendChild(btn);
-      });
-    }
-
-    function getNumberButtonClasses(ticket) {
-      const base = 'aspect-square flex items-center justify-center rounded text-[10px] sm:text-sm font-medium transition-colors';
-      switch (ticket.status) {
-        case 'vendido':
-          return `${base} bg-red-50 text-neutral-400 line-through cursor-not-allowed border border-red-100 opacity-70`;
-        case 'seleccionado':
-          return `${base} bg-[#B76E79] text-white border border-[#B18588] shadow-sm`;
-        default:
-          return `${base} bg-white text-neutral-800 border border-[#E8C5C8]/80 hover:bg-[#E8C5C8] cursor-pointer`;
-      }
-    }
-
-    // =========================================================================
-    // === RENDER: CART ===
-    // =========================================================================
-
-    function renderCart() {
-      const selected = getSelectedTickets();
-      const list = document.getElementById('cart-list');
-      const empty = document.getElementById('cart-empty');
-      const countEl = document.getElementById('cart-count');
-      const totalEl = document.getElementById('cart-total');
-      const fabCount = document.getElementById('fab-count');
-      const checkoutBtn = document.getElementById('btn-checkout');
-
-      list.innerHTML = '';
-      if (selected.length === 0) {
-        empty.classList.remove('hidden');
-        list.classList.add('hidden');
-        checkoutBtn.disabled = true;
-      } else {
-        empty.classList.add('hidden');
-        list.classList.remove('hidden');
-        selected
-          .sort((a, b) => a.id - b.id)
-          .forEach((t) => {
-            const li = document.createElement('li');
-            li.textContent = `Boleto #${formatTicketId(t.id)}`;
-            list.appendChild(li);
-          });
-        checkoutBtn.disabled = false;
-      }
-
-      const total = selected.length * TICKET_PRICE;
-      countEl.textContent = String(selected.length);
-      totalEl.textContent = `₡${total.toLocaleString('es-CR')}`;
-      fabCount.textContent = String(selected.length);
-
-      if (selected.length > 0 && window.innerWidth < 768) {
-        document.getElementById('cart-panel').classList.remove('translate-y-full');
-      }
-    }
-
-    // =========================================================================
-    // === EVENTS: TICKETS ===
-    // =========================================================================
-
-    function toggleTicket(id) {
-      const ticket = getTicketById(id);
-      if (!ticket || ticket.status === 'vendido') return;
-
-      if (ticket.status === 'seleccionado') {
-        ticket.status = 'disponible';
-      } else {
-        ticket.status = 'seleccionado';
-      }
-
-      renderGrid();
-      renderCart();
-    }
-
-    // =========================================================================
-    // === EVENTS: DONATION ===
-    // =========================================================================
-
-    function updateDonationDisplay() {
-      document.getElementById('donation-display').textContent =
-        `₡${selectedDonationAmount.toLocaleString('es-CR')}`;
-    }
-
-    function initDonation() {
-      document.querySelectorAll('.donation-quick').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          selectedDonationAmount = Number(btn.dataset.amount);
-          document.getElementById('custom-amount').value = '';
-          document.querySelectorAll('.donation-quick').forEach((b) => {
-            b.classList.remove('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
-          });
-          btn.classList.add('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
-          updateDonationDisplay();
-        });
-      });
-
-      document.getElementById('custom-amount').addEventListener('input', (e) => {
-        const val = parseInt(e.target.value, 10);
-        selectedDonationAmount = isNaN(val) ? 0 : val;
-        document.querySelectorAll('.donation-quick').forEach((b) => {
-          b.classList.remove('ring-2', 'ring-[#B76E79]', 'bg-[#E8C5C8]/50');
-        });
-        updateDonationDisplay();
-      });
-
-      document.getElementById('btn-donation-pay').addEventListener('click', () => {
-        if (selectedDonationAmount <= 0) {
-          alert('Por favor selecciona o ingresa un monto.');
-          return;
-        }
-        openModal('donation');
-      });
-    }
-
-    // =========================================================================
-    // === EVENTS: MODALS ===
-    // =========================================================================
-
-    function openModal(name) {
-      const modal = document.getElementById(name === 'donation' ? 'modal-donation' : 'modal-checkout');
-      modal.classList.remove('hidden');
-      document.body.classList.add('modal-open');
-
-      if (name === 'checkout') {
-        const selected = getSelectedTickets();
-        const total = selected.length * TICKET_PRICE;
-        document.getElementById('modal-checkout-total').textContent =
-          `₡${total.toLocaleString('es-CR')}`;
-        document.getElementById('checkout-summary').innerHTML = selected
-          .sort((a, b) => a.id - b.id)
-          .map((t) => `<p>Boleto #${formatTicketId(t.id)} — ₡${TICKET_PRICE.toLocaleString('es-CR')}</p>`)
-          .join('');
-      }
-    }
-
-    function closeModal(name) {
-      const modal = document.getElementById(name === 'donation' ? 'modal-donation' : 'modal-checkout');
-      modal.classList.add('hidden');
-      const anyOpen =
-        !document.getElementById('modal-donation').classList.contains('hidden') ||
-        !document.getElementById('modal-checkout').classList.contains('hidden');
-      if (!anyOpen) document.body.classList.remove('modal-open');
-    }
-
-    function initModals() {
-      document.querySelectorAll('[data-close-modal]').forEach((el) => {
-        el.addEventListener('click', () => closeModal(el.dataset.closeModal));
-      });
-
-      document.getElementById('btn-checkout').addEventListener('click', () => {
-        if (getSelectedTickets().length === 0) return;
-        openModal('checkout');
-      });
-
-      document.getElementById('checkout-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const payload = {
-          nombre: document.getElementById('checkout-name').value.trim(),
-          telefono: document.getElementById('checkout-phone').value.trim(),
-          instagram: document.getElementById('checkout-instagram').value.trim(),
-          boletos: getSelectedTickets().map((t) => ({
-            id: t.id,
-            numero: formatTicketId(t.id),
-          })),
-          total: getSelectedTickets().length * TICKET_PRICE,
-          precioUnitario: TICKET_PRICE,
-        };
-        console.log('[Rifa] Confirmación de compra — listo para API/Firebase:', payload);
-        alert('¡Gracias! Tu solicitud ha sido registrada. Te contactaremos para confirmar el pago.');
-        closeModal('checkout');
-        document.getElementById('checkout-form').reset();
-      });
-    }
-
-    // =========================================================================
-    // === EVENTS: MOBILE CART ===
-    // =========================================================================
-
-    function initMobileCart() {
-      const panel = document.getElementById('cart-panel');
-      const fab = document.getElementById('cart-fab');
-      const closeBtn = document.getElementById('cart-toggle-mobile');
-
-      fab.addEventListener('click', () => {
-        panel.classList.remove('translate-y-full');
-      });
-
-      closeBtn.addEventListener('click', () => {
-        panel.classList.add('translate-y-full');
-      });
-    }
-
-    // =========================================================================
-    // === INIT ===
-    // =========================================================================
-
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    buildTickets();
-    renderTabs();
-    renderGrid();
-    renderCart();
-    initDonation();
-    initModals();
-    initMobileCart();
-  </script>
+  <script type="module" src="../js/web-rifa/rifa-app.js"></script>
 </body>
 </html>

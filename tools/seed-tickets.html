@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Seed — web-rifa (uso único)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-neutral-100 flex items-center justify-center p-6 font-sans">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-lg p-8 border border-neutral-200">
+    <h1 class="text-xl font-semibold text-neutral-800 mb-2">Inicializar 1000 boletos</h1>
+    <p class="text-sm text-neutral-600 mb-6">
+      Ejecutar <strong>una sola vez</strong> después de crear Firestore y publicar las reglas en
+      <code class="text-xs bg-neutral-100 px-1 rounded">firebase/firestore.rules</code>.
+    </p>
+    <button id="btn-seed" type="button"
+      class="w-full rounded-xl bg-[#B18588] text-white py-3 font-semibold hover:opacity-90 disabled:opacity-50">
+      Crear boletos 000–999
+    </button>
+    <p id="log" class="mt-4 text-sm text-neutral-600 whitespace-pre-wrap"></p>
+    <a href="../vanessa-quiros/index.html" class="block mt-6 text-center text-sm text-[#B18588] hover:underline">
+      Ir a la rifa →
+    </a>
+  </div>
+  <script type="module">
+    import { seedTickets } from "../js/web-rifa/seed-tickets.js";
+
+    const btn = document.getElementById("btn-seed");
+    const log = document.getElementById("log");
+
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      log.textContent = "Creando boletos…";
+      try {
+        const result = await seedTickets();
+        log.textContent = result.message;
+      } catch (err) {
+        console.error(err);
+        log.textContent = "Error: " + (err.message || err.code || String(err));
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

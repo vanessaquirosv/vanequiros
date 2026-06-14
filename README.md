@@ -21,6 +21,7 @@ Ver [PUSH.md](PUSH.md) para subir cambios a GitHub.
 ## Firebase / rifa (web-rifa)
 
 - Documentación: [docs/WEB-RIFA.md](docs/WEB-RIFA.md)
+- **Poner en marcha:** [docs/FIREBASE-SETUP.md](docs/FIREBASE-SETUP.md)
 - **Secretos y claves privadas:** [docs/SECRETS.md](docs/SECRETS.md) — nunca commitear `js/web-rifa/firebase-config.js`
 
 ## Licencia
