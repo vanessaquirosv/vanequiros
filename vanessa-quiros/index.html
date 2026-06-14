@@ -153,7 +153,7 @@
         </p>
       </aside>
 
-      <div id="rifa-loading" class="text-center py-12 text-neutral-500">
+      <div id="rifa-loading" class="hidden text-center py-12 text-neutral-500">
         <p class="animate-pulse">Cargando boletos desde Firebase…</p>
       </div>
       <div id="rifa-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-800 text-sm">
@@ -301,6 +301,20 @@
     </div>
   </div>
 
-  <script type="module" src="../js/web-rifa/rifa-app.js"></script>
+  <script type="module">
+    import("../js/web-rifa/rifa-app.js").catch((err) => {
+      console.error("[web-rifa] Error al cargar la aplicación:", err);
+      const loading = document.getElementById("rifa-loading");
+      const errorBox = document.getElementById("rifa-error");
+      const errorMsg = document.getElementById("rifa-error-msg");
+      if (loading) loading.classList.add("hidden");
+      if (errorBox) errorBox.classList.remove("hidden");
+      if (errorMsg) {
+        errorMsg.textContent =
+          err.message ||
+          "No se pudo iniciar la rifa. Abre la consola del navegador (F12) para más detalles.";
+      }
+    });
+  </script>
 </body>
 </html>

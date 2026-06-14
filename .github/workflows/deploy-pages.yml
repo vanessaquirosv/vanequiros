@@ -33,6 +33,10 @@ jobs:
           FB_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FB_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
         run: |
+          if [ -z "$FB_API_KEY" ] || [ -z "$FB_APP_ID" ]; then
+            echo "::error::Faltan secrets FIREBASE_* en Settings → Secrets → Actions"
+            exit 1
+          fi
           mkdir -p js/web-rifa
           node -e "
           const fs = require('fs');
@@ -48,6 +52,7 @@ jobs:
             'js/web-rifa/firebase-config.js',
             'export const firebaseConfig = ' + JSON.stringify(cfg, null, 2) + ';\n'
           );
+          console.log('firebase-config.js generado OK');
           "
 
       - name: Setup Pages

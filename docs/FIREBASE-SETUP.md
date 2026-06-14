@@ -68,12 +68,17 @@ Tras el deploy con secrets, visita:
 
 Si ya agregaste los 6 secrets `FIREBASE_*`:
 
-1. Repo → **Settings → Pages → Source:** **GitHub Actions**
-2. Push a `main` (o re-ejecuta el workflow **Deploy GitHub Pages** en Actions)
-3. Cuando termine, abre:  
+1. Repo → **Settings → Pages**
+2. **Build and deployment → Source:** elige **GitHub Actions** (no uses «Deploy from a branch»)
+3. Push a `main` o re-ejecuta el workflow **Deploy GitHub Pages** en la pestaña Actions
+4. Cuando el workflow termine en verde, abre:  
    `https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/`
 
-El workflow genera `firebase-config.js` en el deploy; no hace falta subir claves al repo.
+> **Si ves «Cargando boletos…» sin fin:** casi siempre es porque Pages está en «Deploy from branch» y falta `firebase-config.js` (404). Cambia a **GitHub Actions** como source.
+
+Verifica que exista el archivo en producción:  
+`https://vanessaquirosv.github.io/vanequiros/js/web-rifa/firebase-config.js`  
+(debe responder con JavaScript, no 404)
 
 ---
 
