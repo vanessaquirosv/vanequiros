@@ -156,10 +156,16 @@
       <div id="rifa-loading" class="hidden text-center py-12 text-neutral-500">
         <p class="animate-pulse">Cargando boletos desde Firebase…</p>
       </div>
-      <div id="rifa-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-800 text-sm">
-        <p class="font-semibold mb-2">No se pudo cargar la rifa</p>
-        <p id="rifa-error-msg"></p>
-        <p class="mt-3 text-xs text-red-600">Consulta <code>docs/FIREBASE-SETUP.md</code> en el repositorio.</p>
+      <div id="rifa-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-6 text-left text-red-800 text-sm max-w-xl mx-auto">
+        <p class="font-semibold mb-2 text-center">No se pudo cargar la rifa</p>
+        <p id="rifa-error-msg" class="mb-4"></p>
+        <ol class="list-decimal list-inside space-y-2 text-xs text-red-900/90">
+          <li>Abre <a href="https://console.firebase.google.com/project/vanessaquiros-co/firestore/rules" target="_blank" rel="noopener noreferrer" class="underline font-medium">Firebase Console → Firestore → Rules</a></li>
+          <li>Copia todo el archivo <code class="bg-red-100 px-1 rounded">firebase/firestore.rules</code> del repositorio</li>
+          <li>Pega en el editor y pulsa <strong>Publish</strong></li>
+          <li>Abre <a href="../tools/seed-tickets.html" class="underline font-medium">tools/seed-tickets.html</a> y crea los boletos (una sola vez)</li>
+          <li>Recarga esta página (Ctrl+F5)</li>
+        </ol>
       </div>
       <div id="rifa-empty" class="hidden rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-900 text-sm">
         <p class="font-semibold mb-2">Base de datos sin boletos</p>

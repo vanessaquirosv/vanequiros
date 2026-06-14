@@ -27,11 +27,16 @@ Guía paso a paso para conectar la rifa de `vanessa-quiros` con Firestore despu�
 
 ---
 
-## Paso 2 — Publicar reglas de seguridad
+## Paso 2 — Publicar reglas de seguridad (OBLIGATORIO)
 
-1. En Firestore → pestaña **Rules**
-2. Copia el contenido de [`firebase/firestore.rules`](../firebase/firestore.rules) del repo
-3. **Publish**
+Si ves **«Missing or insufficient permissions»**, Firestore aún tiene las reglas por defecto que **bloquean todo**. Debes publicar las reglas del proyecto:
+
+1. Abre [Firestore Rules — vanessaquiros-co](https://console.firebase.google.com/project/vanessaquiros-co/firestore/rules)
+2. **Borra** el contenido actual del editor
+3. Copia **todo** el archivo [`firebase/firestore.rules`](../firebase/firestore.rules) de este repositorio
+4. Pega en el editor de Firebase
+5. Clic en **Publish** (Publicar)
+6. Espera unos segundos y recarga la rifa
 
 Estas reglas permiten:
 - **Leer** todos los boletos (público)
@@ -142,7 +147,7 @@ Cuando el comprador paga por SINPE:
 
 | Error | Causa probable |
 |-------|----------------|
-| `Missing or insufficient permissions` | Reglas no publicadas o incorrectas |
+| **`Missing or insufficient permissions`** | Reglas de Firestore **no publicadas**. Sigue el Paso 2 de esta guía |
 | `Failed to fetch firebase-config.js` | Falta config local o deploy sin secrets |
 | `El boleto #XXX ya no está disponible` | Otro usuario lo reservó (comportamiento correcto) |
 | Colección vacía | Ejecutar seed |

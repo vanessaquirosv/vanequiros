@@ -49,7 +49,17 @@ function isOccupied(status) {
   return status === "vendido" || status === "reservado";
 }
 
-function setRifaUI(state, message = "") {
+function formatFirestoreError(err) {
+  const code = err?.code || "";
+  if (code === "permission-denied" || /insufficient permissions/i.test(err?.message || "")) {
+    return (
+      "Firestore bloqueó la lectura (reglas de seguridad). " +
+      "En Firebase Console → Firestore → Rules, pega el contenido de firebase/firestore.rules del repo y pulsa Publish. " +
+      "Luego abre tools/seed-tickets.html para crear los 1000 boletos."
+    );
+  }
+  return err?.message || "No se pudo conectar con Firebase. Revisa docs/FIREBASE-SETUP.md.";
+}
   const loading = document.getElementById("rifa-loading");
   const error = document.getElementById("rifa-error");
   const empty = document.getElementById("rifa-empty");
@@ -100,10 +110,7 @@ function initFirebaseTickets() {
     },
     (err) => {
       console.error("[web-rifa] Error Firestore:", err);
-      setRifaUI(
-        "error",
-        err.message || "No se pudo conectar con Firebase. Revisa la consola y FIREBASE-SETUP.md."
-      );
+      setRifaUI("error", formatFirestoreError(err));
     }
   );
 }
