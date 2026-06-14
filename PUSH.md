@@ -1,241 +1,194 @@
 # Guía de Push — VaneQuiros Web
 
-Documento para publicar y actualizar el sitio web en el repositorio oficial de GitHub.
+Documento oficial para publicar y actualizar el sitio en GitHub **sin filtrar claves ni secretos**.
 
 | Dato | Valor |
 |------|--------|
-| **Repositorio** | [https://github.com/vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros) |
-| **URL remota (HTTPS)** | `https://github.com/vanessaquirosv/vanequiros.git` |
-| **Rama principal** | `main` |
-| **Tipo de proyecto** | Sitio estático (HTML + Tailwind CDN + JavaScript) |
+| **Repositorio** | [github.com/vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros) |
+| **Remoto HTTPS** | `https://github.com/vanessaquirosv/vanequiros.git` |
+| **Rama** | `main` |
+| **Sitio en línea** | [vanessaquirosv.github.io/vanequiros](https://vanessaquirosv.github.io/vanequiros/) |
+
+---
+
+## Push rápido (recomendado)
+
+Desde PowerShell, en la carpeta del proyecto:
+
+```powershell
+cd "D:\Users\Chino\Documents\$$$ Clientes\VaneQuiros\WebSite"
+.\scripts\push-seguro.ps1 -Mensaje "Describe tu cambio aquí"
+```
+
+El script **bloquea el push** si detecta archivos sensibles en el staging area.
 
 ---
 
 ## 1. Requisitos previos
 
-1. **Git** instalado en tu equipo.  
-   - Verificar: `git --version`
-2. **Cuenta de GitHub** con acceso al repositorio `vanessaquirosv/vanequiros`.
-3. **Autenticación** configurada (una de estas opciones):
-   - [GitHub CLI](https://cli.github.com/) (`gh auth login`)
-   - [Personal Access Token](https://github.com/settings/tokens) (permiso `repo`) al hacer `git push`
-   - SSH: `git@github.com:vanessaquirosv/vanequiros.git` (si tienes llave SSH en GitHub)
+| Requisito | Verificación |
+|-----------|--------------|
+| Git instalado | `git --version` |
+| Acceso al repo | Colaborador en `vanessaquirosv/vanequiros` |
+| Autenticación GitHub | Token PAT, `gh auth login`, o SSH |
+| Config Firebase local | `js/web-rifa/firebase-config.js` (copia de `.example.js`) — **solo en tu PC** |
+| Secrets en GitHub | 6 variables `FIREBASE_*` en Settings → Secrets → Actions |
+| GitHub Pages | Source: **GitHub Actions** (no «Deploy from branch») |
+
+Documentación relacionada:
+
+- [docs/SECRETS.md](docs/SECRETS.md) — claves y GitHub Secrets  
+- [docs/FIREBASE-SETUP.md](docs/FIREBASE-SETUP.md) — Firestore, reglas, seed  
+- [docs/WEB-RIFA.md](docs/WEB-RIFA.md) — modelo de datos rifa  
 
 ---
 
-## 2. Estructura que debe subirse
-
-Asegúrate de que la raíz del repositorio en GitHub contenga exactamente esta estructura:
+## 2. Qué SÍ sube a GitHub (público)
 
 ```
-vanequiros/                    ← raíz del repo (no una carpeta extra “WebSite”)
-├── index.html                 ← portal unificador
-├── vanessa-quiros/
-│   └── index.html
-├── tech-and-chic/
-│   └── index.html
-├── frances-sin-estres/
-│   └── index.html
+vanequiros/
+├── index.html
+├── vanessa-quiros/index.html
+├── tech-and-chic/index.html
+├── frances-sin-estres/index.html
 ├── img/
-│   ├── VQ background t.png    ← logotipo Vanessa (transparente)
-│   └── VQ background.png      ← opcional
+├── js/web-rifa/
+│   ├── firebase-config.example.js   ← plantilla (placeholders)
+│   ├── firebase-config.loader.js
+│   ├── firebase-init.js
+│   ├── tickets.js, orders.js, rifa-app.js, seed-tickets.js
+├── firebase/firestore.rules
+├── tools/seed-tickets.html
+├── .github/workflows/deploy-pages.yml
+├── docs/
+├── scripts/push-seguro.ps1
 ├── .gitignore
-├── PUSH.md                    ← este documento
-└── README.md                  ← descripción del proyecto (opcional)
+├── PUSH.md
+└── README.md
 ```
-
-> **Importante:** Los archivos HTML deben quedar en la **raíz del repositorio**, no dentro de una subcarpeta `WebSite/`, para que GitHub Pages sirva correctamente `index.html` como página principal.
 
 ---
 
-## 3. Primera publicación (proyecto local → GitHub)
+## 3. Qué NUNCA debe subirse
 
-El repositorio remoto ya existe con `README.md` y `LICENSE`. Sigue **una** de estas dos rutas.
+| Archivo / patrón | Motivo |
+|------------------|--------|
+| `js/web-rifa/firebase-config.js` | Claves reales del proyecto Firebase |
+| `.env`, `.env.*` | Variables de entorno |
+| `*-firebase-adminsdk-*.json` | Service account (acceso total) |
+| `serviceAccount*.json` | Credenciales admin |
+| `.firebase/` | Cache local Firebase CLI |
+| `.cursor/` | Reglas locales del IDE |
 
-### Opción A — Recomendada: clonar el repo y copiar archivos
+Verificación manual antes de cada push:
 
 ```powershell
-# 1. Ir a la carpeta donde guardas proyectos
-cd "D:\Users\Chino\Documents\$$$ Clientes\VaneQuiros"
-
-# 2. Clonar el repositorio vacío (solo README/LICENSE)
-git clone https://github.com/vanessaquirosv/vanequiros.git
-cd vanequiros
-
-# 3. Copiar TODO el contenido de WebSite a esta carpeta (excepto .git si existiera)
-#    Desde el Explorador de archivos, copia:
-#    WebSite\*  →  vanequiros\
-#    (index.html, carpetas vanessa-quiros, tech-and-chic, frances-sin-estres, img, etc.)
-
-# 4. Revisar qué se va a subir
+git check-ignore -v js/web-rifa/firebase-config.js
 git status
-
-# 5. Agregar archivos
-git add .
-
-# 6. Primer commit del sitio
-git commit -m "Publicar sitio multipágina VaneQuiros (landing, Vanessa Quirós, placeholders)"
-
-# 7. Subir a GitHub
-git push -u origin main
 ```
 
-### Opción B: inicializar Git dentro de la carpeta `WebSite`
+`firebase-config.js` debe aparecer como **ignored** o **untracked**, nunca en «Changes to be committed».
+
+---
+
+## 4. Push manual paso a paso
 
 ```powershell
 cd "D:\Users\Chino\Documents\$$$ Clientes\VaneQuiros\WebSite"
 
-git init
-git branch -M main
-git remote add origin https://github.com/vanessaquirosv/vanequiros.git
-
-# Traer README/LICENSE del remoto y fusionar historiales
-git fetch origin
-git pull origin main --allow-unrelated-histories
-
-# Resolver conflictos si README local y remoto chocan (conservar ambos o unificar texto)
-git add .
-git commit -m "Publicar sitio multipágina VaneQuiros"
-
-git push -u origin main
-```
-
-Si `git pull` muestra conflictos en `README.md`, edita el archivo, deja una sola versión, luego:
-
-```powershell
-git add README.md
-git commit -m "Resolver conflicto README"
-git push -u origin main
-```
-
----
-
-## 4. Actualizaciones posteriores (cada cambio en el sitio)
-
-Desde la carpeta que tenga `.git` y el remoto configurado (`vanequiros` o `WebSite`):
-
-```powershell
+# 1. Revisar cambios
 git status
+
+# 2. Confirmar que NO se incluye config privada
+git diff --cached --name-only
+git check-ignore js/web-rifa/firebase-config.js
+
+# 3. Agregar solo lo deseado (evita git add . si tienes dudas)
 git add .
-git commit -m "Descripción breve del cambio (ej: rifa en USD, logo Vanessa)"
+
+# 4. Verificar staging una vez más
+git diff --cached --name-only
+
+# 5. Commit
+git commit -m "Tu mensaje descriptivo"
+
+# 6. Push
 git push origin main
 ```
 
-### Buenas prácticas de mensajes de commit
+---
 
-| Cambio | Ejemplo de mensaje |
-|--------|-------------------|
-| Textos / diseño | `Actualizar copy y estilos sección Historia` |
-| Rifa | `Conectar rifa con backend / ajustar grid` |
-| Donaciones | `Donaciones en USD` |
-| Imágenes | `Agregar logotipo VQ transparente` |
+## 5. Después del push
+
+### A. Verificar en GitHub
+
+1. [github.com/vanessaquirosv/vanequiros/commits/main](https://github.com/vanessaquirosv/vanequiros/commits/main)  
+2. Confirmar que **no** aparece `firebase-config.js` en el commit.
+
+### B. Verificar deploy (GitHub Actions)
+
+1. Repo → **Actions** → workflow **Deploy GitHub Pages** → estado verde  
+2. Comprobar config generada en producción (debe existir, no 404):  
+   `https://vanessaquirosv.github.io/vanequiros/js/web-rifa/firebase-config.js`
+
+### C. Verificar rifa
+
+1. Abrir [vanessa-quiros](https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/)  
+2. Debe mostrar cuadrícula de números o mensaje «Base de datos sin boletos» (ejecutar seed si aplica)
 
 ---
 
-## 5. Comprobar que el push fue correcto
+## 6. GitHub Secrets requeridos
 
-1. Abre [https://github.com/vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros).
-2. Confirma que aparecen `index.html`, las carpetas de marcas y `img/`.
-3. En la pestaña **Commits**, verifica tu último commit.
+Configurar en **Settings → Secrets and variables → Actions**:
 
----
+| Secret | Ejemplo / valor |
+|--------|-----------------|
+| `FIREBASE_API_KEY` | apiKey de Firebase Console |
+| `FIREBASE_AUTH_DOMAIN` | `vanessaquiros-co.firebaseapp.com` |
+| `FIREBASE_PROJECT_ID` | `vanessaquiros-co` |
+| `FIREBASE_STORAGE_BUCKET` | `vanessaquiros-co.firebasestorage.app` |
+| `FIREBASE_MESSAGING_SENDER_ID` | messagingSenderId |
+| `FIREBASE_APP_ID` | appId |
 
-## 6. Publicar el sitio en línea (GitHub Pages — gratuito)
-
-### Opción recomendada: GitHub Actions + secretos Firebase
-
-El repo incluye `.github/workflows/deploy-pages.yml`. Las claves Firebase **no** van en el código; se configuran como **GitHub Secrets** (ver [docs/SECRETS.md](docs/SECRETS.md)).
-
-1. Repo → **Settings → Secrets and variables → Actions** → crear los 6 secrets `FIREBASE_*`.
-2. **Settings → Pages** → Source: **GitHub Actions**.
-3. Push a `main` → el workflow genera `firebase-config.js` en el deploy y publica el sitio.
-
-URL esperada: `https://vanessaquirosv.github.io/vanequiros/`
-
-### Opción alternativa: Deploy from branch (sin Firebase en producción)
-
-Si aún no configuras secrets, puedes usar **Deploy from a branch** → `main` → `/ (root)`.  
-La rifa seguirá en modo local hasta integrar Firebase; **no** subas `firebase-config.js` al repo.
-
-### Rutas importantes
-
-| Página | URL (con Pages activo) |
-|--------|-------------------------|
-| Portal | `https://vanessaquirosv.github.io/vanequiros/` |
-| Vanessa Quirós | `https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/` |
-| Tech & Chic | `https://vanessaquirosv.github.io/vanequiros/tech-and-chic/` |
-| Français Sans Stress | `https://vanessaquirosv.github.io/vanequiros/frances-sin-estres/` |
-
-> Si más adelante usas dominio propio, se configura en **Pages → Custom domain**.
+El workflow `.github/workflows/deploy-pages.yml` genera `firebase-config.js` **solo en el artefacto de deploy**, no en el historial de Git.
 
 ---
 
-## 7. Problemas frecuentes
+## 7. Checklist de seguridad (cada push)
 
-### `rejected - non-fast-forward`
+- [ ] `git status` no lista `firebase-config.js` ni `.env`
+- [ ] No hay claves pegadas en HTML, JS público, docs ni mensajes de commit
+- [ ] `git diff --cached` revisado antes de commit
+- [ ] Push exitoso a `main`
+- [ ] Workflow Deploy GitHub Pages en verde
+- [ ] Rifa carga en producción (sin «Cargando…» infinito)
 
-Alguien subió cambios antes que tú. Actualiza y vuelve a subir:
+---
+
+## 8. Problemas frecuentes
+
+| Problema | Solución |
+|----------|----------|
+| `Permission denied` al push | Aceptar invitación al repo o autenticarse con cuenta con acceso |
+| `non-fast-forward` | `git pull origin main` → resolver → `git push` |
+| Rifa en «Cargando…» | Pages → Source = **GitHub Actions**; verificar secrets y workflow |
+| `firebase-config.js` 404 en Pages | Re-ejecutar workflow; confirmar secrets `FIREBASE_*` |
+| Clave filtrada por error | Rotar en Firebase/Google Cloud; no commitear; ver [docs/SECRETS.md](docs/SECRETS.md) |
+
+---
+
+## 9. Comandos de referencia
 
 ```powershell
+git remote -v
 git pull origin main
 git push origin main
+git log --oneline -5
 ```
 
-### `Authentication failed`
-
-- Usa token personal en lugar de contraseña de GitHub, o
-- Ejecuta `gh auth login` y repite el push.
-
-### `remote origin already exists`
-
-```powershell
-git remote set-url origin https://github.com/vanessaquirosv/vanequiros.git
-```
-
-### Archivos muy grandes (imágenes)
-
-GitHub advierte archivos **> 50 MB**. Los PNG del logo suelen estar bien; si un asset falla, comprime la imagen antes del push.
-
-### No se ve el logo en producción
-
-Comprueba que la carpeta `img/` esté en el repo y que la ruta en HTML sea `../img/VQ background t.png` desde `vanessa-quiros/index.html`.
+**Remoto SSH (alternativa):** `git@github.com:vanessaquirosv/vanequiros.git`
 
 ---
 
-## 8. Checklist antes de cada push
-
-- [ ] El sitio abre bien en local (doble clic en `index.html` o Live Server).
-- [ ] `vanessa-quiros/index.html` carga el logo desde `img/`.
-- [ ] **`js/web-rifa/firebase-config.js` NO aparece en `git status`** (ver [docs/SECRETS.md](docs/SECRETS.md)).
-- [ ] No se suben contraseñas, tokens, `.env` ni archivos `*-firebase-adminsdk-*.json`.
-- [ ] `git status` muestra solo los archivos que quieres publicar.
-- [ ] Mensaje de commit claro.
-- [ ] `git push origin main` sin errores.
-- [ ] Verificación en github.com/vanessaquirosv/vanequiros.
-
----
-
-## 9. Resumen de comandos (referencia rápida)
-
-```powershell
-git remote add origin https://github.com/vanessaquirosv/vanequiros.git
-git add .
-git commit -m "Tu mensaje"
-git push -u origin main
-```
-
-**Remoto SSH (alternativa):**
-
-```text
-git@github.com:vanessaquirosv/vanequiros.git
-```
-
----
-
-## 10. Próximo paso (backend rifa)
-
-Cuando integres Firebase o Supabase, evita subir claves secretas. Usa variables en el panel del proveedor y un archivo de ejemplo `config.example.js` en el repo. El flujo de **push** sigue siendo el mismo: commit → `git push origin main`.
-
----
-
-*Documento generado para el proyecto VaneQuiros — repositorio [vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros).*
+*VaneQuiros — repositorio [vanessaquirosv/vanequiros](https://github.com/vanessaquirosv/vanequiros)*

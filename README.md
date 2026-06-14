@@ -16,7 +16,7 @@ HTML5, Tailwind CSS (CDN), JavaScript ES6+.
 
 ## Publicación
 
-Ver [PUSH.md](PUSH.md) para subir cambios a GitHub.
+Ver [PUSH.md](PUSH.md) para subir cambios de forma segura (`scripts/push-seguro.ps1`).
 
 ## Firebase / rifa (web-rifa)
 
