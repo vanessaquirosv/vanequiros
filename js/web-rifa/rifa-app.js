@@ -60,6 +60,8 @@ function formatFirestoreError(err) {
   }
   return err?.message || "No se pudo conectar con Firebase. Revisa docs/FIREBASE-SETUP.md.";
 }
+
+function setRifaUI(state, message = "") {
   const loading = document.getElementById("rifa-loading");
   const error = document.getElementById("rifa-error");
   const empty = document.getElementById("rifa-empty");
