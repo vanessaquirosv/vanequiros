@@ -87,6 +87,41 @@ Verifica que exista el archivo en producción:
 
 ---
 
+## Paso 4.5 — Firebase Auth anónimo + Storage (OBLIGATORIO para comprobantes)
+
+El flujo de checkout ahora **sube el comprobante SINPE a Firebase Storage**. Para que funcione de forma segura:
+
+### A) Habilitar Auth anónimo
+
+1. Firebase Console → **Build → Authentication**
+2. **Get started** (si aplica)
+3. Pestaña **Sign-in method**
+4. Habilita **Anonymous**
+
+### B) Reglas de Firebase Storage (recomendadas)
+
+Firebase Console → **Build → Storage → Rules**. Reemplaza reglas por algo como:
+
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /comprobantes_sinpe/{allPaths=**} {
+      allow read: if false;
+      allow write: if request.auth != null
+        && request.resource.size < 8 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
+```
+
+Notas:
+- `request.auth != null` exige sesión (el frontend usa **Auth anónimo**).
+- `read: false` mantiene los comprobantes privados (solo accesibles por `downloadURL`).
+
+---
+
 ## Paso 5 — Probar la rifa
 
 1. Abre la página de Vanessa Quirós → sección **Rifa Benéfica**
@@ -95,6 +130,7 @@ Verifica que exista el archivo en producción:
 4. En Firebase Console:
    - Colección **`orders`**: nuevo documento `pendiente_pago`
    - Colección **`tickets`**: esos IDs pasan a `reservado`
+   - Storage: archivo en `comprobantes_sinpe/`
 
 Si ves **“Base de datos vacía”**, ejecuta el seed (Paso 3).
 
