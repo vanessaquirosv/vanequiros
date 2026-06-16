@@ -2,6 +2,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isNonEmptyString(x) {
+      return x is string && x.size() > 0;
+    }
+
+    function isValidTotal(total) {
+      // Tabla de precios:
+      // 1 boleto = 2000
+      // 2 boletos = 3500
+      // 3 boletos = 4200
+      // 4 boletos = 4800
+      // 5+ boletos = n * 1000
+      return total == 2000
+        || total == 3500
+        || total == 4200
+        || total == 4800
+        || (total >= 5000 && (total % 1000) == 0);
+    }
+
+    function isValidNotif(prefs) {
+      return prefs is map
+        && prefs.whatsapp is bool
+        && prefs.email is bool
+        && prefs.instagram is bool
+        && (prefs.whatsapp || prefs.email || prefs.instagram);
+    }
+
     // --- Boletos de rifa (000-999) ---
     match /tickets/{ticketId} {
       allow read: if true;
@@ -23,15 +49,30 @@ service cloud.firestore {
     match /orders/{orderId} {
       allow read: if false;
       allow create: if request.resource.data.status == 'pendiente_pago'
-                    && request.resource.data.nombre is string
-                    && request.resource.data.nombre.size() > 0
-                    && request.resource.data.telefono is string
-                    && request.resource.data.telefono.size() > 0
-                    && request.resource.data.boletos is list
-                    && request.resource.data.boletos.size() > 0
-                    && request.resource.data.boletos.size() <= 30
+                    && isNonEmptyString(request.resource.data.nombre)
                     && request.resource.data.total is number
-                    && request.resource.data.precioUnitario == 2000;
+                    && isValidTotal(request.resource.data.total)
+                    && isNonEmptyString(request.resource.data.urlComprobante)
+                    && isValidNotif(request.resource.data.preferenciasNotificacion)
+                    // Campos condicionales según preferencias
+                    && (
+                      request.resource.data.preferenciasNotificacion.whatsapp == false
+                      || isNonEmptyString(request.resource.data.telefono)
+                    )
+                    && (
+                      request.resource.data.preferenciasNotificacion.email == false
+                      || isNonEmptyString(request.resource.data.email)
+                    )
+                    && (
+                      request.resource.data.preferenciasNotificacion.instagram == false
+                      || isNonEmptyString(request.resource.data.instagram)
+                    )
+                    // Permitir vacíos cuando no se usan
+                    && request.resource.data.telefono is string
+                    && request.resource.data.email is string
+                    && request.resource.data.instagram is string
+                    // createdAt debe ser timestamp (serverTimestamp)
+                    && request.resource.data.createdAt is timestamp;
       allow update, delete: if false;
     }
 

@@ -475,6 +475,10 @@
     let app, db, storage, auth;
     let firebaseReady = false;
     let authReady = false;
+    /** @type {Promise<void> | null} */
+    let authInitPromise = null;
+    /** @type {(() => void) | null} */
+    let resolveAuthInit = null;
 
     // =========================================================================
     // === Rifa render ===
@@ -614,6 +618,14 @@
     // =========================================================================
 
     function openModalCheckout() {
+      if (!firebaseReady) {
+        alert("Aún estamos cargando los boletos. Intenta en unos segundos.");
+        return;
+      }
+      if (!authReady) {
+        alert("Estamos preparando la sesión segura para subir el comprobante. Intenta nuevamente en unos segundos.");
+        return;
+      }
       const modal = document.getElementById("modal-checkout");
       modal.classList.remove("hidden");
       document.body.classList.add("modal-open");
@@ -815,6 +827,12 @@
       document.getElementById("checkout-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
+        // Asegurar Auth listo antes de permitir subir a Storage.
+        if (!authReady) {
+          alert("Sesión no lista aún. Espera un momento y vuelve a intentar.");
+          return;
+        }
+
         if (!validateNotifPrefs()) return;
 
         const selected = getSelectedTickets().sort((a, b) => a.id - b.id);
@@ -923,23 +941,32 @@
       storage = getStorage(app);
       auth = getAuth(app);
 
-      // Auth anónimo (requerido para Storage Rules)
-      onAuthStateChanged(auth, async (user) => {
+      // Auth anónimo (requerido para Storage Rules) — inicializar ANTES de permitir checkout.
+      authInitPromise = new Promise((resolve) => (resolveAuthInit = resolve));
+
+      onAuthStateChanged(auth, (user) => {
         if (user) {
           authReady = true;
+          if (resolveAuthInit) resolveAuthInit();
           renderCart();
-          return;
-        }
-        try {
-          await signInAnonymously(auth);
-        } catch (err) {
-          console.error("[web-rifa] Auth error:", err);
-          setRifaUI(
-            "error",
-            "No se pudo iniciar sesión anónima para subir comprobantes. Revisa Firebase Auth y Storage Rules."
-          );
         }
       });
+
+      try {
+        // Intento explícito para no depender solo del listener (evita flujos “pegados”).
+        await signInAnonymously(auth);
+      } catch (err) {
+        console.error("[web-rifa] Auth error:", err);
+        setRifaUI(
+          "error",
+          "No se pudo iniciar sesión anónima (necesario para subir comprobantes). " +
+            "Verifica en Firebase Console: Authentication → Sign-in method → Anonymous = ON."
+        );
+        return;
+      }
+
+      // Esperar a que el estado de auth se propague (habilita checkout).
+      if (authInitPromise) await authInitPromise;
 
       // Init UI events
       initModals();
