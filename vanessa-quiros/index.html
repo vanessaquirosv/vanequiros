@@ -454,6 +454,51 @@
         .slice(0, 40) || "anon";
     }
 
+    const MAX_UPLOAD_BYTES = 1 * 1024 * 1024; // 1MB
+    const MAX_DIMENSION = 1600; // px (resize para mantener liviano)
+
+    async function compressImageToUnder1MB(file) {
+      // Aceptamos cualquier imagen, pero la subimos optimizada (WEBP) <= 1MB.
+      // Si no se logra, lanzamos error.
+
+      const bitmap = await createImageBitmap(file);
+
+      const scale = Math.min(
+        1,
+        MAX_DIMENSION / Math.max(bitmap.width, bitmap.height)
+      );
+
+      const targetW = Math.max(1, Math.round(bitmap.width * scale));
+      const targetH = Math.max(1, Math.round(bitmap.height * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext("2d", { alpha: false });
+      if (!ctx) throw new Error("No se pudo inicializar el canvas para comprimir la imagen.");
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
+      // Intentar varias calidades hasta <= 1MB
+      const mime = "image/webp";
+      const qualities = [0.82, 0.75, 0.68, 0.6, 0.52, 0.45];
+
+      for (const q of qualities) {
+        // eslint-disable-next-line no-await-in-loop
+        const blob = await new Promise((resolve) =>
+          canvas.toBlob(resolve, mime, q)
+        );
+        if (!blob) continue;
+        if (blob.size <= MAX_UPLOAD_BYTES) return { blob, contentType: mime };
+      }
+
+      throw new Error(
+        "No se pudo comprimir el comprobante a 1MB. Intenta con una captura más pequeña o recortada."
+      );
+    }
+
     // =========================================================================
     // === Firebase init (config from generated module) ===
     // =========================================================================
@@ -702,11 +747,13 @@
     async function uploadComprobante({ file, nombre }) {
       const timestamp = Date.now();
       const safeName = sanitizeNameForPath(nombre);
-      const path = `comprobantes_sinpe/ORD_${timestamp}_${safeName}.png`;
+      const path = `comprobantes_sinpe/ORD_${timestamp}_${safeName}.webp`;
+
+      const { blob, contentType } = await compressImageToUnder1MB(file);
 
       const r = storageRef(storage, path);
-      await uploadBytes(r, file, {
-        contentType: file.type || "image/png",
+      await uploadBytes(r, blob, {
+        contentType,
         cacheControl: "public,max-age=31536000",
       });
       return getDownloadURL(r);
@@ -884,8 +931,10 @@
           alert("El comprobante debe ser una imagen (JPG/PNG/WEBP).");
           return;
         }
-        if (file.size > 8 * 1024 * 1024) {
-          alert("La imagen es muy grande. Por favor sube una captura menor a 8MB.");
+        // Permitimos archivos grandes de entrada, pero se comprimen a <= 1MB antes de subir.
+        // Aun así, bloqueamos casos extremos para no colgar el navegador.
+        if (file.size > 20 * 1024 * 1024) {
+          alert("La imagen es demasiado grande. Por favor sube una captura menor a 20MB.");
           return;
         }
 
