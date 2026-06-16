@@ -153,8 +153,11 @@
         </p>
       </aside>
 
-      <div id="rifa-loading" class="hidden text-center py-12 text-neutral-500">
-        <p class="animate-pulse">Cargando boletos desde Firebase…</p>
+      <div id="rifa-loading" class="text-center py-12 text-neutral-500">
+        <div class="inline-flex items-center gap-3">
+          <span class="inline-block w-4 h-4 rounded-full border-2 border-neutral-300 border-t-[#B18588] animate-spin"></span>
+          <p class="animate-pulse">Cargando números disponibles...</p>
+        </div>
       </div>
       <div id="rifa-error" class="hidden rounded-2xl border border-red-200 bg-red-50 p-6 text-left text-red-800 text-sm max-w-xl mx-auto">
         <p class="font-semibold mb-2 text-center">No se pudo cargar la rifa</p>
@@ -413,6 +416,13 @@
         const msg = document.getElementById("rifa-error-msg");
         if (msg) msg.textContent = message;
       }
+    }
+
+    // Mostrar carga inmediatamente (evita secciones “en blanco” si algo falla después).
+    try {
+      setRifaUI("loading");
+    } catch (_) {
+      // noop
     }
 
     function formatCRC(amount) {
@@ -760,7 +770,23 @@
       const col = collection(db, "tickets");
 
       // Primera carga para feedback rápido
-      const snap = await getDocs(col);
+      let snap;
+      try {
+        snap = await getDocs(col);
+      } catch (err) {
+        console.error("[web-rifa] getDocs(tickets) failed:", {
+          code: err?.code,
+          message: err?.message,
+          stack: err?.stack,
+        });
+        setRifaUI(
+          "error",
+          err?.message ||
+            "No se pudo leer la colección tickets. Revisa Firestore Rules y que Firestore esté habilitado."
+        );
+        return;
+      }
+
       if (snap.empty) {
         firebaseReady = false;
         setRifaUI("empty");
@@ -801,7 +827,11 @@
           renderCart();
         },
         (err) => {
-          console.error("[web-rifa] Firestore error:", err);
+          console.error("[web-rifa] onSnapshot(tickets) error:", {
+            code: err?.code,
+            message: err?.message,
+            stack: err?.stack,
+          });
           setRifaUI(
             "error",
             err?.message || "No se pudo leer Firestore. Revisa reglas en Firebase Console."
