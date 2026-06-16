@@ -28,3 +28,7 @@ node_modules/
 
 # Cursor / planes locales (no publicar)
 .cursor/
+
+# Admin app local (NO publicar)
+admin-app-java/
+**/serviceAccountKey.json
