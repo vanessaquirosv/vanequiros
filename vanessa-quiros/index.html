@@ -982,21 +982,32 @@
         }
       });
 
-      try {
-        // Intento explícito para no depender solo del listener (evita flujos “pegados”).
-        await signInAnonymously(auth);
-      } catch (err) {
-        console.error("[web-rifa] Auth error:", err);
-        setRifaUI(
-          "error",
-          "No se pudo iniciar sesión anónima (necesario para subir comprobantes). " +
-            "Verifica en Firebase Console: Authentication → Sign-in method → Anonymous = ON."
-        );
-        return;
-      }
+      // Iniciar sesión anónima, pero NO bloquear el render de la cuadrícula si tarda.
+      // El checkout se habilita cuando authReady = true.
+      const authTimeoutMs = 8000;
+      const authAttempt = (async () => {
+        const cred = await signInAnonymously(auth);
+        if (cred?.user) {
+          authReady = true;
+          if (resolveAuthInit) resolveAuthInit();
+          renderCart();
+        }
+      })();
 
-      // Esperar a que el estado de auth se propague (habilita checkout).
-      if (authInitPromise) await authInitPromise;
+      try {
+        await Promise.race([
+          authAttempt,
+          new Promise((resolve) => setTimeout(resolve, authTimeoutMs)),
+        ]);
+      } catch (err) {
+        console.error("[web-rifa] Auth error (non-fatal for grid):", {
+          code: err?.code,
+          message: err?.message,
+          stack: err?.stack,
+        });
+        // No abortar la rifa: la cuadrícula debe renderizar igual.
+        // Solo el upload/checkout quedará bloqueado hasta resolver Auth.
+      }
 
       // Init UI events
       initModals();
