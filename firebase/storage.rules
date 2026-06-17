@@ -3,13 +3,15 @@ service firebase.storage {
   match /b/{bucket}/o {
     match /comprobantes_sinpe/{allPaths=**} {
       // Subida SOLO con usuario autenticado (Auth anónimo) + restricciones.
-      allow write: if request.auth != null
+      allow create, update: if request.auth != null
         && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
 
-      // No exponer públicamente por listing; el acceso será por downloadURL si se requiere.
-      allow read: if false;
+      // Requerido para getDownloadURL() tras subir (el token queda en la URL).
+      // El panel admin usa esa URL; no expone listado público del bucket.
+      allow read: if request.auth != null;
+
+      allow delete: if false;
     }
   }
 }
-

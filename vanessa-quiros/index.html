@@ -575,7 +575,7 @@
       }
       if (code === "storage/unauthorized" || code === "storage/unauthenticated") {
         return (
-          "No autorizado para subir el comprobante. Verifica Auth anónimo habilitado y publica las reglas de Storage (firebase/storage.rules)."
+          "No autorizado en Storage. Publica las reglas de firebase/storage.rules (incluye read para usuarios autenticados) y habilita Auth anónimo."
         );
       }
       if (code === "permission-denied") {
@@ -845,11 +845,27 @@
       const { blob, contentType } = await compressImageToUnder1MB(file);
 
       const r = storageRef(storage, path);
-      await uploadBytes(r, blob, {
-        contentType,
-        cacheControl: "public,max-age=31536000",
-      });
-      return getDownloadURL(r);
+      try {
+        await uploadBytes(r, blob, {
+          contentType,
+          cacheControl: "public,max-age=31536000",
+        });
+      } catch (err) {
+        console.error("[web-rifa] uploadBytes failed:", err);
+        throw err;
+      }
+
+      try {
+        return await getDownloadURL(r);
+      } catch (err) {
+        console.error("[web-rifa] getDownloadURL failed:", err);
+        throw Object.assign(
+          new Error(
+            "La imagen se subió pero no se pudo obtener el enlace. Publica las reglas de Storage con allow read para usuarios autenticados."
+          ),
+          { code: err?.code || "storage/unauthorized" }
+        );
+      }
     }
 
     async function reserveTicketsAndCreateOrder({

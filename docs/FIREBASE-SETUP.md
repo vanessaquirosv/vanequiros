@@ -107,10 +107,11 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     match /comprobantes_sinpe/{allPaths=**} {
-      allow read: if false;
-      allow write: if request.auth != null
-        && request.resource.size < 8 * 1024 * 1024
+      allow create, update: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
         && request.resource.contentType.matches('image/.*');
+      allow read: if request.auth != null;
+      allow delete: if false;
     }
   }
 }
@@ -118,7 +119,7 @@ service firebase.storage {
 
 Notas:
 - `request.auth != null` exige sesión (el frontend usa **Auth anónimo**).
-- `read: false` mantiene los comprobantes privados (solo accesibles por `downloadURL`).
+- `allow read` es **obligatorio** para que `getDownloadURL()` funcione tras la subida.
 
 ---
 
