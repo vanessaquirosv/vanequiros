@@ -32,8 +32,9 @@ service cloud.firestore {
     match /tickets/{ticketId} {
       allow read: if true;
 
-      // Solo reserva: disponible → reservado con orderId (transacción de compra)
-      allow update: if resource.data.status == 'disponible'
+      // Solo reserva autenticada: disponible → reservado con orderId (transacción de compra)
+      allow update: if request.auth != null
+                    && resource.data.status == 'disponible'
                     && request.resource.data.status == 'reservado'
                     && request.resource.data.orderId is string
                     && request.resource.data.orderId.size() > 0;
@@ -48,7 +49,9 @@ service cloud.firestore {
     // --- Pedidos de compradores ---
     match /orders/{orderId} {
       allow read: if false;
-      allow create: if request.resource.data.status == 'pendiente_pago'
+      allow create: if request.auth != null
+                    && request.resource.data.status == 'pendiente_pago'
+                    && request.resource.data.authUid == request.auth.uid
                     && isNonEmptyString(request.resource.data.nombre)
                     && request.resource.data.total is number
                     && isValidTotal(request.resource.data.total)

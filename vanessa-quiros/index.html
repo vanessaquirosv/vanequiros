@@ -302,6 +302,10 @@
 
         <div id="checkout-summary" class="rounded-xl bg-[#FAF7F2] p-4 mb-5 text-sm max-h-28 overflow-y-auto"></div>
 
+        <div id="checkout-auth-status" class="mb-4 rounded-lg border border-[#E8C5C8]/60 bg-white px-3 py-2 text-xs text-neutral-600">
+          <span id="checkout-auth-status-text">Preparando sesión segura…</span>
+        </div>
+
         <form id="checkout-form" class="space-y-4">
           <div>
             <label for="checkout-nombre" class="block text-sm font-medium text-neutral-700 mb-1">Nombre Completo</label>
@@ -530,10 +534,98 @@
     let app, db, storage, auth;
     let firebaseReady = false;
     let authReady = false;
-    /** @type {Promise<void> | null} */
-    let authInitPromise = null;
-    /** @type {(() => void) | null} */
-    let resolveAuthInit = null;
+
+    function updateAuthStatusUI(state, detail = "") {
+      const box = document.getElementById("checkout-auth-status");
+      const text = document.getElementById("checkout-auth-status-text");
+      if (!box || !text) return;
+
+      if (state === "ready") {
+        box.className =
+          "mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-800";
+        text.textContent = "Sesión segura activa. Puedes subir tu comprobante.";
+        return;
+      }
+
+      if (state === "loading") {
+        box.className =
+          "mb-4 rounded-lg border border-[#E8C5C8]/60 bg-white px-3 py-2 text-xs text-neutral-600";
+        text.textContent = detail || "Preparando sesión segura…";
+        return;
+      }
+
+      box.className =
+        "mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-800";
+      text.textContent =
+        detail ||
+        "No se pudo iniciar sesión anónima. Habilita Anonymous en Firebase Authentication.";
+    }
+
+    function formatFirebaseError(err) {
+      const code = err?.code || "";
+      const message = err?.message || "";
+
+      if (code === "auth/operation-not-allowed") {
+        return (
+          "Auth anónimo no está habilitado. En Firebase Console ve a Authentication → Sign-in method → Anonymous → Enable."
+        );
+      }
+      if (code === "auth/admin-restricted-operation") {
+        return "Este dominio no está autorizado para Auth. Agrega tu dominio en Firebase → Authentication → Settings → Authorized domains.";
+      }
+      if (code === "storage/unauthorized" || code === "storage/unauthenticated") {
+        return (
+          "No autorizado para subir el comprobante. Verifica Auth anónimo habilitado y publica las reglas de Storage (firebase/storage.rules)."
+        );
+      }
+      if (code === "permission-denied") {
+        return (
+          "Permiso denegado en Firestore. Publica las reglas actualizadas (firebase/firestore.rules) en Firebase Console."
+        );
+      }
+      if (/Missing or insufficient permissions/i.test(message)) {
+        return (
+          "No tienes permiso para completar la compra. Publica reglas de Firestore y Storage, y habilita Auth anónimo."
+        );
+      }
+      return message || "Ocurrió un error inesperado. Intenta de nuevo.";
+    }
+
+    async function ensureAnonymousAuth() {
+      if (!auth) throw new Error("Firebase Auth no está inicializado.");
+
+      updateAuthStatusUI("loading", "Conectando sesión segura…");
+
+      let user = auth.currentUser;
+      if (!user) {
+        const cred = await signInAnonymously(auth);
+        user = cred.user;
+      }
+
+      // Refrescar token antes de Storage/Firestore (evita unauthorized intermitente).
+      await user.getIdToken(true);
+
+      authReady = true;
+      updateAuthStatusUI("ready");
+      renderCart();
+      return user;
+    }
+
+    async function initAnonymousAuth() {
+      updateAuthStatusUI("loading");
+      try {
+        await ensureAnonymousAuth();
+      } catch (err) {
+        authReady = false;
+        console.error("[web-rifa] Auth error:", {
+          code: err?.code,
+          message: err?.message,
+          stack: err?.stack,
+        });
+        updateAuthStatusUI("error", formatFirebaseError(err));
+        renderCart();
+      }
+    }
 
     // =========================================================================
     // === Rifa render ===
@@ -646,7 +738,7 @@
           li.textContent = `Boleto #${formatTicketId(t.id)}`;
           list.appendChild(li);
         });
-        checkoutBtn.disabled = !firebaseReady || !authReady;
+        checkoutBtn.disabled = !firebaseReady;
       }
 
       const pricing = calcPricing(selected.length);
@@ -677,14 +769,15 @@
         alert("Aún estamos cargando los boletos. Intenta en unos segundos.");
         return;
       }
-      if (!authReady) {
-        alert("Estamos preparando la sesión segura para subir el comprobante. Intenta nuevamente en unos segundos.");
-        return;
-      }
       const modal = document.getElementById("modal-checkout");
       modal.classList.remove("hidden");
       document.body.classList.add("modal-open");
       syncCheckoutSummary();
+      if (!authReady) {
+        initAnonymousAuth();
+      } else {
+        updateAuthStatusUI("ready");
+      }
     }
 
     function closeModalCheckout() {
@@ -768,6 +861,7 @@
       telefono,
       email,
       instagram,
+      authUid,
     }) {
       return runTransaction(db, async (tx) => {
         const refs = ticketIds.map((id) => doc(db, "tickets", String(id)));
@@ -792,6 +886,7 @@
           telefono: telefono || "",
           email: email || "",
           instagram: instagram || "",
+          authUid,
           createdAt: serverTimestamp(),
         });
 
@@ -904,9 +999,12 @@
       document.getElementById("checkout-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // Asegurar Auth listo antes de permitir subir a Storage.
-        if (!authReady) {
-          alert("Sesión no lista aún. Espera un momento y vuelve a intentar.");
+        // Auth anónimo obligatorio antes de subir comprobante y reservar boletos.
+        let authUser;
+        try {
+          authUser = await ensureAnonymousAuth();
+        } catch (err) {
+          alert(formatFirebaseError(err));
           return;
         }
 
@@ -961,6 +1059,7 @@
             telefono,
             email,
             instagram,
+            authUid: authUser.uid,
           });
 
           console.log("[web-rifa] Order created:", orderId);
@@ -975,10 +1074,7 @@
           );
         } catch (err) {
           console.error("[web-rifa] Checkout error:", err);
-          alert(
-            err?.message ||
-              "No se pudo completar la reserva. Puede que un boleto se haya apartado antes. Intenta de nuevo."
-          );
+          alert(formatFirebaseError(err));
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
@@ -1020,43 +1116,16 @@
       storage = getStorage(app);
       auth = getAuth(app);
 
-      // Auth anónimo (requerido para Storage Rules) — inicializar ANTES de permitir checkout.
-      authInitPromise = new Promise((resolve) => (resolveAuthInit = resolve));
-
       onAuthStateChanged(auth, (user) => {
         if (user) {
           authReady = true;
-          if (resolveAuthInit) resolveAuthInit();
+          updateAuthStatusUI("ready");
           renderCart();
         }
       });
 
-      // Iniciar sesión anónima, pero NO bloquear el render de la cuadrícula si tarda.
-      // El checkout se habilita cuando authReady = true.
-      const authTimeoutMs = 8000;
-      const authAttempt = (async () => {
-        const cred = await signInAnonymously(auth);
-        if (cred?.user) {
-          authReady = true;
-          if (resolveAuthInit) resolveAuthInit();
-          renderCart();
-        }
-      })();
-
-      try {
-        await Promise.race([
-          authAttempt,
-          new Promise((resolve) => setTimeout(resolve, authTimeoutMs)),
-        ]);
-      } catch (err) {
-        console.error("[web-rifa] Auth error (non-fatal for grid):", {
-          code: err?.code,
-          message: err?.message,
-          stack: err?.stack,
-        });
-        // No abortar la rifa: la cuadrícula debe renderizar igual.
-        // Solo el upload/checkout quedará bloqueado hasta resolver Auth.
-      }
+      // Auth anónimo en paralelo con la cuadrícula (no bloquea el render de boletos).
+      initAnonymousAuth();
 
       // Init UI events
       initModals();
