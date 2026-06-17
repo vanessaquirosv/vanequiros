@@ -22,89 +22,68 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-  body {
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  .tc-page-glow {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-    background:
-      radial-gradient(ellipse 75% 45% at 50% 22%, rgba(124, 58, 237, 0.14) 0%, transparent 58%),
-      radial-gradient(ellipse 55% 35% at 50% 68%, rgba(217, 70, 239, 0.07) 0%, transparent 52%);
-  }
-
-  .tc-page-glow::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 40% 28% at 50% 24%, rgba(167, 139, 250, 0.08) 0%, transparent 70%);
-  }
-
-  body > nav,
-  body > main,
-  body > footer {
-    position: relative;
-    z-index: 1;
-  }
-
   .tc-logo-stage {
     position: relative;
     width: min(92vw, 20.93rem);
     margin-inline: auto;
     margin-bottom: 0.25rem;
-    padding: 0.5rem 0 0.25rem;
-  }
-
-  .tc-logo-glow {
-    position: absolute;
-    left: 50%;
-    top: 52%;
-    transform: translate(-50%, -50%);
-    width: 88%;
-    height: 72%;
-    border-radius: 50%;
-    background: radial-gradient(
-      ellipse at center,
-      rgba(167, 139, 250, 0.28) 0%,
-      rgba(139, 92, 246, 0.12) 42%,
-      transparent 72%
-    );
-    filter: blur(22px);
-    pointer-events: none;
-  }
-
-  .tc-logo-wrap {
-    position: relative;
-    z-index: 1;
-    width: 100%;
+    padding: 0.5rem 0 1rem;
     line-height: 0;
   }
 
+  .tc-logo-stage::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0.35rem;
+    transform: translateX(-50%);
+    width: 58%;
+    height: 1.1rem;
+    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 50%, transparent 72%);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+
   .tc-logo-img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: auto;
     display: block;
     object-fit: contain;
     filter:
-      drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5))
-      drop-shadow(0 0 24px rgba(139, 92, 246, 0.32))
-      drop-shadow(0 0 48px rgba(192, 132, 252, 0.16));
+      drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7))
+      drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45))
+      drop-shadow(0 8px 18px rgba(233, 213, 255, 0.14));
   }
 
   .tc-title-rule {
     width: 5.5rem;
     margin-top: 0.25rem;
     margin-bottom: 1.75rem;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(233, 213, 255, 0.08);
+  }
+
+  .tc-hero-title {
+    text-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.55),
+      0 8px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  .tc-hero-tagline {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .tc-hero-copy {
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+  }
+
+  .tc-hero-cta {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
   }
   </style>
 </head>
 <body class="min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased flex flex-col">
-
-  <div class="tc-page-glow" aria-hidden="true"></div>
 
   <nav class="px-6 py-6">
     <a href="../index.html" class="text-sm text-violet-400 hover:text-fuchsia-400 transition-colors">&larr; Portal principal</a>
@@ -112,30 +91,27 @@
 
   <main class="flex-1 flex flex-col items-center justify-center px-6 py-12 sm:py-16 text-center">
     <div class="tc-logo-stage">
-      <div class="tc-logo-glow" aria-hidden="true"></div>
-      <div class="tc-logo-wrap">
-        <img
-          src="../img/T%26C%20Logo_WebReTouch.png"
-          alt=""
-          width="335"
-          height="335"
-          fetchpriority="high"
-          decoding="async"
-          class="tc-logo-img"
-        />
-      </div>
+      <img
+        src="../img/T%26C%20Logo_WebReTouch.png"
+        alt=""
+        width="335"
+        height="335"
+        fetchpriority="high"
+        decoding="async"
+        class="tc-logo-img"
+      />
     </div>
     <div class="tc-title-rule h-1 rounded-full bg-gradient-to-r from-violet-600 via-fuchsia-500 to-violet-600"></div>
-    <h1 class="font-serif text-4xl sm:text-5xl md:text-6xl font-semibold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+    <h1 class="tc-hero-title font-serif text-4xl sm:text-5xl md:text-6xl font-semibold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
       Tech &amp; Chic
     </h1>
-    <p class="mt-4 text-violet-300/80 text-sm uppercase tracking-[0.3em]">Innovación con estilo</p>
-    <p class="mt-8 max-w-md text-neutral-400 leading-relaxed">
+    <p class="tc-hero-tagline mt-4 text-violet-300/80 text-sm uppercase tracking-[0.3em]">Innovación con estilo</p>
+    <p class="tc-hero-copy mt-8 max-w-md text-neutral-400 leading-relaxed">
       Estamos diseñando una experiencia digital donde la tecnología se encuentra con la elegancia.
       Muy pronto podrás explorar todo lo que tenemos preparado.
     </p>
     <button type="button" disabled
-      class="mt-10 inline-flex items-center justify-center rounded-full border border-violet-500/40 px-8 py-3 text-sm font-semibold text-neutral-500 cursor-not-allowed">
+      class="tc-hero-cta mt-10 inline-flex items-center justify-center rounded-full border border-violet-500/40 px-8 py-3 text-sm font-semibold text-neutral-500 cursor-not-allowed">
       Próximamente
     </button>
     <div class="mt-12 flex flex-col gap-2 items-center">
