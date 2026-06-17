@@ -267,8 +267,9 @@
     <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
       <div class="pointer-events-auto bg-white rounded-2xl shadow-xl w-full max-w-lg md:max-w-2xl p-6 sm:p-8 border border-[#E8C5C8] max-h-[calc(100vh-2rem)] overflow-y-auto">
         <h3 id="modal-checkout-title" class="font-serif text-2xl text-[#B18588] mb-2">Confirmar Compra</h3>
-        <p class="text-sm text-neutral-600 mb-4">Completa tus datos para finalizar la reserva.</p>
+        <p id="checkout-intro-text" class="text-sm text-neutral-600 mb-4">Completa tus datos para finalizar la reserva.</p>
 
+        <div id="checkout-panel-content">
         <div class="rounded-xl bg-[#FAF7F2] p-4 border border-[#E8C5C8]/60 text-sm text-neutral-700 mb-5">
           <p class="font-semibold text-[#B18588] mb-2">Instrucciones de pago</p>
           <p class="leading-relaxed">
@@ -304,6 +305,10 @@
 
         <div id="checkout-auth-status" class="mb-4 rounded-lg border border-[#E8C5C8]/60 bg-white px-3 py-2 text-xs text-neutral-600">
           <span id="checkout-auth-status-text">Preparando sesión segura…</span>
+        </div>
+
+        <div id="checkout-feedback" class="hidden mb-4 rounded-xl border px-4 py-3 text-sm" role="alert" aria-live="polite">
+          <p id="checkout-feedback-text" class="leading-relaxed"></p>
         </div>
 
         <form id="checkout-form" class="space-y-4">
@@ -370,8 +375,32 @@
             </button>
           </div>
         </form>
+        </div>
+
+        <div id="checkout-panel-success" class="hidden text-center py-4 sm:py-6">
+          <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600" aria-hidden="true">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h4 class="font-serif text-2xl text-[#B18588] mb-2">¡Reserva registrada!</h4>
+          <p class="text-sm text-neutral-600 mb-1">Guarda esta referencia:</p>
+          <p id="checkout-success-ref" class="font-mono text-xl sm:text-2xl font-bold tracking-wider text-[#B76E79] mb-4"></p>
+          <p class="text-sm text-neutral-500 leading-relaxed max-w-md mx-auto mb-6">
+            Recibimos tu comprobante. Nos comunicaremos contigo para confirmar el pago y tus números reservados.
+          </p>
+          <button type="button" id="checkout-success-close"
+            class="w-full sm:w-auto min-w-[200px] rounded-xl bg-[#B18588] px-8 py-3 text-white font-semibold hover:bg-[#B76E79] transition-colors">
+            Entendido
+          </button>
+        </div>
       </div>
     </div>
+  </div>
+
+  <!-- Toast in-page (sin alert del navegador) -->
+  <div id="rifa-toast" class="fixed bottom-6 left-1/2 z-[70] hidden w-[min(100%-2rem,28rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm shadow-lg" role="status" aria-live="polite">
+    <p id="rifa-toast-text" class="leading-relaxed"></p>
   </div>
 
   <script type="module">
@@ -764,11 +793,75 @@
     // === Modal + dynamic form ===
     // =========================================================================
 
+    let rifaToastTimer = null;
+
+    function showRifaToast(message, type = "info") {
+      const toast = document.getElementById("rifa-toast");
+      const text = document.getElementById("rifa-toast-text");
+      if (!toast || !text) return;
+
+      const styles = {
+        info: "border-[#E8C5C8] bg-white text-neutral-700",
+        error: "border-red-200 bg-red-50 text-red-800",
+        success: "border-emerald-200 bg-emerald-50 text-emerald-800",
+      };
+
+      toast.className = `fixed bottom-6 left-1/2 z-[70] w-[min(100%-2rem,28rem)] -translate-x-1/2 rounded-xl border px-4 py-3 text-sm shadow-lg ${styles[type] || styles.info}`;
+      text.textContent = message;
+      toast.classList.remove("hidden");
+
+      if (rifaToastTimer) clearTimeout(rifaToastTimer);
+      rifaToastTimer = setTimeout(() => {
+        toast.classList.add("hidden");
+      }, 5000);
+    }
+
+    function hideCheckoutFeedback() {
+      const el = document.getElementById("checkout-feedback");
+      if (el) el.classList.add("hidden");
+    }
+
+    function showCheckoutFeedback(type, message) {
+      const el = document.getElementById("checkout-feedback");
+      const text = document.getElementById("checkout-feedback-text");
+      if (!el || !text) return;
+
+      const styles = {
+        error: "border-red-200 bg-red-50 text-red-800",
+        warning: "border-amber-200 bg-amber-50 text-amber-900",
+        info: "border-[#E8C5C8] bg-[#FAF7F2] text-neutral-700",
+      };
+
+      el.className = `mb-4 rounded-xl border px-4 py-3 text-sm ${styles[type] || styles.info}`;
+      text.textContent = message;
+      el.classList.remove("hidden");
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function resetCheckoutModalState() {
+      hideCheckoutFeedback();
+      document.getElementById("checkout-panel-content")?.classList.remove("hidden");
+      document.getElementById("checkout-panel-success")?.classList.add("hidden");
+      document.getElementById("modal-checkout-title").textContent = "Confirmar Compra";
+      document.getElementById("checkout-intro-text")?.classList.remove("hidden");
+    }
+
+    function showCheckoutSuccess(orderId) {
+      const ref = String(orderId || "").slice(0, 8).toUpperCase();
+      document.getElementById("checkout-panel-content")?.classList.add("hidden");
+      document.getElementById("checkout-panel-success")?.classList.remove("hidden");
+      document.getElementById("checkout-success-ref").textContent = ref;
+      document.getElementById("modal-checkout-title").textContent = "Reserva confirmada";
+      document.getElementById("checkout-intro-text")?.classList.add("hidden");
+      hideCheckoutFeedback();
+    }
+
     function openModalCheckout() {
       if (!firebaseReady) {
-        alert("Aún estamos cargando los boletos. Intenta en unos segundos.");
+        showRifaToast("Aún estamos cargando los boletos. Intenta en unos segundos.", "info");
         return;
       }
+      resetCheckoutModalState();
       const modal = document.getElementById("modal-checkout");
       modal.classList.remove("hidden");
       document.body.classList.add("modal-open");
@@ -781,6 +874,7 @@
     }
 
     function closeModalCheckout() {
+      resetCheckoutModalState();
       document.getElementById("modal-checkout").classList.add("hidden");
       const anyOpen =
         !document.getElementById("modal-donation").classList.contains("hidden") ||
@@ -1007,6 +1101,8 @@
         el.addEventListener("click", closeModalCheckout);
       });
 
+      document.getElementById("checkout-success-close")?.addEventListener("click", closeModalCheckout);
+
       document.getElementById("btn-checkout").addEventListener("click", () => {
         if (getSelectedTickets().length === 0) return;
         openModalCheckout();
@@ -1014,13 +1110,14 @@
 
       document.getElementById("checkout-form").addEventListener("submit", async (e) => {
         e.preventDefault();
+        hideCheckoutFeedback();
 
         // Auth anónimo obligatorio antes de subir comprobante y reservar boletos.
         let authUser;
         try {
           authUser = await ensureAnonymousAuth();
         } catch (err) {
-          alert(formatFirebaseError(err));
+          showCheckoutFeedback("error", formatFirebaseError(err));
           return;
         }
 
@@ -1038,17 +1135,15 @@
         const fileInput = document.getElementById("checkout-comprobante");
         const file = fileInput.files?.[0];
         if (!file) {
-          alert("Por favor sube la captura de pantalla del comprobante SINPE.");
+          showCheckoutFeedback("warning", "Por favor sube la captura de pantalla del comprobante SINPE.");
           return;
         }
         if (!file.type.startsWith("image/")) {
-          alert("El comprobante debe ser una imagen (JPG/PNG/WEBP).");
+          showCheckoutFeedback("warning", "El comprobante debe ser una imagen (JPG, PNG o WEBP).");
           return;
         }
-        // Permitimos archivos grandes de entrada, pero se comprimen a <= 1MB antes de subir.
-        // Aun así, bloqueamos casos extremos para no colgar el navegador.
         if (file.size > 20 * 1024 * 1024) {
-          alert("La imagen es demasiado grande. Por favor sube una captura menor a 20MB.");
+          showCheckoutFeedback("warning", "La imagen es demasiado grande. Sube una captura menor a 20 MB.");
           return;
         }
 
@@ -1080,17 +1175,14 @@
 
           console.log("[web-rifa] Order created:", orderId);
           selectedIds.clear();
-          closeModalCheckout();
           e.target.reset();
           applyNotifUI();
           renderGrid();
           renderCart();
-          alert(
-            `¡Reserva registrada! Ref: ${orderId.slice(0, 8)}…\n\nNos comunicaremos contigo para confirmar el pago.`
-          );
+          showCheckoutSuccess(orderId);
         } catch (err) {
           console.error("[web-rifa] Checkout error:", err);
-          alert(formatFirebaseError(err));
+          showCheckoutFeedback("error", formatFirebaseError(err));
         } finally {
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
