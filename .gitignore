@@ -30,5 +30,5 @@ node_modules/
 .cursor/
 
 # Admin app local (NO publicar)
-admin-app-java/
+admin-app-exe/
 **/serviceAccountKey.json
