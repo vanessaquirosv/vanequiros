@@ -1,0 +1,17 @@
+rules_version = '2';
+
+// Proyecto Firebase de Tech & Chic — SOLO catálogo.
+// La web pública únicamente LEE los documentos del catálogo.
+// La escritura la hace la app de administración con la cuenta de
+// servicio (firebase-admin), que no pasa por estas reglas.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /catalog/{doc} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

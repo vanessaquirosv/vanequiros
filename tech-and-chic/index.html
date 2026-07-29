@@ -3,26 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tech &amp; Chic — Próximamente</title>
-  <meta name="description" content="Tech & Chic — Innovación con estilo. Próximamente.">
-  <link rel="icon" type="image/png" sizes="32x32" href="/vanequiros/tech-and-chic/favicon-32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="/vanequiros/tech-and-chic/apple-touch-icon.png">
+  <title>Tech &amp; Chic — Tienda</title>
+  <meta name="description" content="Tech & Chic — Innovación con estilo. Tecnología, accesorios y más. Ordena por WhatsApp o Instagram.">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="canonical" href="https://vanessaquirosv.github.io/vanequiros/tech-and-chic/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CR">
   <meta property="og:site_name" content="Tech &amp; Chic">
-  <meta property="og:title" content="Tech &amp; Chic — Próximamente">
-  <meta property="og:description" content="Tech &amp; Chic — Innovación con estilo. Próximamente.">
+  <meta property="og:title" content="Tech &amp; Chic — Tienda">
+  <meta property="og:description" content="Innovación con estilo. Tecnología, accesorios y más. Ordena por WhatsApp o Instagram.">
   <meta property="og:url" content="https://vanessaquirosv.github.io/vanequiros/tech-and-chic/">
   <meta property="og:image" content="https://vanessaquirosv.github.io/vanequiros/tech-and-chic/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Logo Tech &amp; Chic">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Tech &amp; Chic — Próximamente">
-  <meta name="twitter:description" content="Tech &amp; Chic — Innovación con estilo. Próximamente.">
+  <meta name="twitter:title" content="Tech &amp; Chic — Tienda">
+  <meta name="twitter:description" content="Innovación con estilo. Tecnología, accesorios y más.">
   <meta name="twitter:image" content="https://vanessaquirosv.github.io/vanequiros/tech-and-chic/og-image.png">
-  <meta name="twitter:image:alt" content="Logo Tech &amp; Chic">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -38,124 +37,125 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-  .tc-logo-stage {
-    position: relative;
-    width: min(92vw, 20.93rem);
-    margin-inline: auto;
-    margin-bottom: 0.25rem;
-    padding: 0.5rem 0 1rem;
-    line-height: 0;
-  }
-
-  .tc-logo-stage::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: 0.35rem;
-    transform: translateX(-50%);
-    width: 58%;
-    height: 1.1rem;
-    background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.25) 50%, transparent 72%);
-    filter: blur(10px);
-    pointer-events: none;
-  }
-
-  .tc-logo-img {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: auto;
-    display: block;
-    object-fit: contain;
-    filter:
-      drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7))
-      drop-shadow(0 14px 28px rgba(0, 0, 0, 0.45))
-      drop-shadow(0 8px 18px rgba(233, 213, 255, 0.14));
-  }
-
-  .tc-title-rule {
-    width: 5.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 1.75rem;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.55), 0 1px 4px rgba(233, 213, 255, 0.08);
-  }
-
-  .tc-hero-title {
-    text-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.55),
-      0 8px 20px rgba(0, 0, 0, 0.45);
-  }
-
-  .tc-hero-tagline {
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  }
-
-  .tc-hero-copy {
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
-  }
-
-  .tc-hero-cta {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.35);
-  }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tc.css">
 </head>
 <body class="min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased flex flex-col">
 
-  <nav class="px-6 py-6">
-    <a href="../index.html" class="text-sm text-violet-400 hover:text-fuchsia-400 transition-colors">&larr; Portal principal</a>
-  </nav>
+  <!-- ══════════════ HEADER (persistente, nunca se recarga) ══════════════ -->
+  <header class="sticky top-0 z-40 border-b border-violet-500/15 bg-neutral-950/85 backdrop-blur-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="flex h-16 items-center justify-between gap-3">
 
-  <main class="flex-1 flex flex-col items-center justify-center px-6 py-12 sm:py-16 text-center">
-    <div class="tc-logo-stage">
-      <img
-        src="/vanequiros/img/T%26C%20Logo_WebReTouch.png"
-        alt=""
-        width="335"
-        height="335"
-        fetchpriority="high"
-        decoding="async"
-        class="tc-logo-img"
-      />
+        <!-- Logo -->
+        <a href="#/inicio" class="tc-logo-link flex items-center gap-3 shrink-0" aria-label="Tech & Chic — Inicio">
+          <img src="../img/T%26C%20Logo_WebReTouch.png" alt="Tech & Chic" width="44" height="44"
+               class="tc-header-logo h-11 w-11 object-contain" decoding="async">
+          <span class="hidden sm:block font-serif text-lg font-semibold leading-tight bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent whitespace-nowrap">
+            Tech &amp; Chic
+          </span>
+        </a>
+
+        <!-- Navegación desktop -->
+        <nav class="hidden md:flex items-center gap-1" aria-label="Principal">
+          <a href="#/inicio"  data-nav="inicio"  class="tc-nav-link">Inicio</a>
+          <a href="#/tienda"  data-nav="tienda"  class="tc-nav-link">Tienda</a>
+          <a href="#/carrito" data-nav="carrito" class="tc-nav-link relative">
+            Carrito
+            <span id="cartBadge" class="tc-cart-badge hidden">0</span>
+          </a>
+          <a href="#/compras" data-nav="compras" class="tc-nav-link">Compras</a>
+        </nav>
+
+        <!-- Área de sesión (la llena auth.js) -->
+        <div id="authArea" class="flex items-center gap-2 shrink-0"></div>
+
+        <!-- Botón menú móvil -->
+        <button id="mobileMenuBtn" type="button" aria-label="Abrir menú" aria-expanded="false"
+                class="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-neutral-300 hover:bg-violet-500/10 hover:text-fuchsia-300 transition-colors">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navegación móvil -->
+      <nav id="mobileMenu" class="md:hidden hidden pb-3 flex flex-col gap-1" aria-label="Principal móvil">
+        <a href="#/inicio"  data-nav="inicio"  class="tc-nav-link">Inicio</a>
+        <a href="#/tienda"  data-nav="tienda"  class="tc-nav-link">Tienda</a>
+        <a href="#/carrito" data-nav="carrito" class="tc-nav-link relative">Carrito <span id="cartBadgeMobile" class="tc-cart-badge-inline hidden">0</span></a>
+        <a href="#/compras" data-nav="compras" class="tc-nav-link">Compras</a>
+      </nav>
     </div>
-    <div class="tc-title-rule h-1 rounded-full bg-gradient-to-r from-violet-600 via-fuchsia-500 to-violet-600"></div>
-    <h1 class="tc-hero-title font-serif text-4xl sm:text-5xl md:text-6xl font-semibold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-      Tech &amp; Chic
-    </h1>
-    <p class="tc-hero-tagline mt-4 text-violet-300/80 text-sm uppercase tracking-[0.3em]">Innovación con estilo</p>
-    <p class="tc-hero-copy mt-8 max-w-md text-neutral-400 leading-relaxed">
-      Estamos diseñando una experiencia digital donde la tecnología se encuentra con la elegancia.
-      Muy pronto podrás explorar todo lo que tenemos preparado.
-    </p>
-    <button type="button" disabled
-      class="tc-hero-cta mt-10 inline-flex items-center justify-center rounded-full border border-violet-500/40 px-8 py-3 text-sm font-semibold text-neutral-500 cursor-not-allowed">
-      Próximamente
-    </button>
-    <div class="mt-12 flex flex-col gap-2 items-center">
-      <a href="https://www.instagram.com/techchic.cr?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-2.5 text-neutral-500 hover:text-fuchsia-400 transition-colors" aria-label="Instagram Tech & Chic">
-        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-        </svg>
-        <span class="text-sm">Instagram · @techchic.cr</span>
-      </a>
-      <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center gap-2.5 text-neutral-500 hover:text-fuchsia-400 transition-colors" aria-label="Facebook Tech & Chic">
-        <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-        </svg>
-        <span class="text-sm">Facebook</span>
-      </a>
-    </div>
+  </header>
+
+  <!-- ══════════════ VISTA (solo esto cambia al navegar) ══════════════ -->
+  <main id="view" class="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 py-8">
+    <!-- contenido inyectado por js/app.js -->
   </main>
 
-  <footer class="py-8 text-center text-sm text-neutral-600">
-    <p>&copy; <span id="year"></span> Tech &amp; Chic. Todos los derechos reservados.</p>
+  <!-- ══════════════ FOOTER (persistente) ══════════════ -->
+  <footer class="mt-16 border-t border-violet-500/15 bg-neutral-925 tc-footer">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- Marca -->
+        <div class="lg:col-span-1">
+          <div class="flex items-center gap-3">
+            <img src="../img/T%26C%20Logo_WebReTouch.png" alt="" class="h-12 w-12 object-contain tc-header-logo" loading="lazy">
+            <div>
+              <p class="font-serif text-lg font-semibold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">Tech &amp; Chic</p>
+              <p class="text-[11px] uppercase tracking-[0.25em] text-violet-300/70">Innovación con estilo</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-neutral-400 leading-relaxed">
+            Tecnología y estilo seleccionados con cariño en Costa Rica.
+            Ordena por WhatsApp o Instagram — sin cuentas obligatorias, sin complicaciones.
+          </p>
+          <div class="mt-5 flex items-center gap-4">
+            <a id="footerIg" href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram"
+               class="text-neutral-500 hover:text-fuchsia-400 transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+            <a id="footerWa" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp"
+               class="text-neutral-500 hover:text-emerald-400 transition-colors">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Departamentos (dinámico) -->
+        <div class="lg:col-span-2">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-violet-300/90">Departamentos</h3>
+          <div id="footerCats" class="mt-4 grid grid-cols-2 gap-x-8 gap-y-2">
+            <p class="text-sm text-neutral-500">Cargando catálogo…</p>
+          </div>
+        </div>
+
+        <!-- Ayuda -->
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-violet-300/90">Ayuda</h3>
+          <ul class="mt-4 space-y-2 text-sm">
+            <li><a href="#/inicio" class="tc-footer-link">Cómo comprar</a></li>
+            <li><a href="#/compras" class="tc-footer-link">Estado de mi compra</a></li>
+            <li><a href="#/carrito" class="tc-footer-link">Mi carrito</a></li>
+            <li><button type="button" id="footerTerms" class="tc-footer-link">Términos y condiciones</button></li>
+            <li><a href="../index.html" class="tc-footer-link">Portal principal</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-12 pt-6 border-t border-violet-500/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-neutral-600">
+        <p>&copy; <span id="year"></span> Tech &amp; Chic. Todos los derechos reservados.</p>
+        <p class="text-neutral-700">Hecho con <span class="text-fuchsia-500/70">♥</span> en Costa Rica</p>
+      </div>
+    </div>
   </footer>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+  <!-- Modales y toasts -->
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2 items-end"></div>
+
+  <script type="module" src="js/app.js"></script>
 </body>
 </html>

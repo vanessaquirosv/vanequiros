@@ -26,9 +26,11 @@ serviceAccount*.json
 npm-debug.log*
 node_modules/
 
-# Cursor / planes locales (no publicar)
+# Cursor / Claude / planes locales (no publicar)
 .cursor/
+.claude/
 
 # Admin app local (NO publicar)
 admin-app-exe/
+techchic-admin/
 **/serviceAccountKey.json
