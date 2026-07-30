@@ -5,7 +5,7 @@
 export const TC_CONFIG = {
   // URL del Web App de Google Apps Script (ventas, usuarios, reseñas).
   // Vacío ⇒ modo demostración local (todo se guarda en este navegador).
-  appsScriptUrl: '',
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwCslc_tkUkdbotEM0kMbnCZVNsgsEZ6GKyoyrti52eFtkp0hcEq5QFOn2CAiHSpIU0QA/exec',
 
   // Contacto para órdenes
   whatsappNumber: '50685836477',       // Costa Rica: +506 8583 6477
