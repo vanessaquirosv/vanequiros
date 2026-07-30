@@ -19,6 +19,10 @@ export const DEFAULT_MARKUP_TIERS = [
   { min: 800001,   max: 999999999, markup: 0.05 },
 ];
 
+// Los precios de venta se redondean SIEMPRE hacia arriba a este múltiplo
+// (0 = desactivado). El valor real lo fija el panel admin al publicar.
+export const DEFAULT_ROUND_STEP = 500;
+
 // Costo operativo según la Diferencia (venta − almacén) del carrito
 export const DEFAULT_OPCOST_TIERS = [
   { difMin: 0,     difMax: 1000,      costo: 3000 },
@@ -36,16 +40,25 @@ export const DEFAULT_OPCOST_TIERS = [
   { difMin: 7001,  difMax: 999999999, costo: 0    },
 ];
 
+/** Redondea hacia arriba al múltiplo indicado (step ≤ 0 ⇒ sin redondeo). */
+export function roundUpTo(value, step = DEFAULT_ROUND_STEP) {
+  const n = Number(value) || 0;
+  const s = Number(step) || 0;
+  if (s <= 0) return Math.round(n);
+  return Math.ceil(n / s) * s;
+}
+
 /**
  * Calcula el precio de venta a partir del precio de almacén.
  * @param {number} precioAlmacen  costo de adquisición en CRC
  * @param {Array}  tiers          tabla de rangos (por defecto la oficial)
- * @returns {number} precio de venta redondeado a colones enteros
+ * @param {number} roundStep      múltiplo al que se redondea hacia arriba
+ * @returns {number} precio de venta en colones enteros
  */
-export function computeSalePrice(precioAlmacen, tiers = DEFAULT_MARKUP_TIERS) {
+export function computeSalePrice(precioAlmacen, tiers = DEFAULT_MARKUP_TIERS, roundStep = DEFAULT_ROUND_STEP) {
   const cost = Math.max(0, Number(precioAlmacen) || 0);
   const tier = tiers.find(t => cost >= t.min && cost <= t.max) || tiers[tiers.length - 1];
-  return Math.round(cost + cost * tier.markup);
+  return roundUpTo(cost + cost * tier.markup, roundStep);
 }
 
 /**
