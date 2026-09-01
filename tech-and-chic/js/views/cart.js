@@ -118,9 +118,34 @@ function drawCart(view) {
             </button>
             <button type="button" id="cartClear" class="tc-btn-ghost w-full justify-center text-xs">Vaciar carrito</button>
           </div>
+          <!-- Método de pago -->
+          <div class="tc-sinpe-note mt-4">
+            <div class="flex items-start gap-3">
+              <span class="tc-sinpe-badge" aria-hidden="true">
+                <svg viewBox="0 0 32 32" class="h-6 w-6" fill="none">
+                  <rect x="9" y="2.5" width="14" height="27" rx="3.2" stroke="currentColor" stroke-width="1.9"/>
+                  <path d="M13.6 5.4h4.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  <path d="M19.4 12.4a4.4 4.4 0 0 0-6.1 1.5c-1.2 2.1-.5 4.8 1.6 6a4.4 4.4 0 0 0 4.5-.06" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+                  <path d="M11.7 15.1h6.6M11 17.6h6.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  <circle cx="16" cy="25.4" r="1.15" fill="currentColor"/>
+                </svg>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-neutral-100">
+                  Se paga por <span class="tc-sinpe-word">SINPE Móvil</span>
+                </p>
+                <p class="text-xs text-neutral-400 leading-relaxed mt-1">
+                  No se cobra nada en la página y no pedimos datos de tarjeta. Primero confirmamos
+                  que todo esté en existencia y luego te enviamos por WhatsApp el número y el monto
+                  exacto para hacer el SINPE.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <p class="mt-3 text-[11px] text-neutral-600 leading-relaxed">
-            Al ordenar se genera un código único de compra. Te contactaremos para confirmar
-            disponibilidad y enviarte las instrucciones de pago por SINPE.
+            Al ordenar se genera un código único de compra con el que podés seguir tu pedido
+            en la pestaña Compras.
           </p>
         </aside>
       </div>

@@ -21,6 +21,18 @@ function currentRoute() {
   return ROUTES[hash] ? hash : 'inicio';
 }
 
+/** Texto buscado según la URL (#/tienda?q=…). La URL es la fuente de verdad. */
+export function currentQuery() {
+  const qs = location.hash.split('?')[1] || '';
+  return new URLSearchParams(qs).get('q') || '';
+}
+
+/** Deja los buscadores del header mostrando lo que dice la URL. */
+function syncSearchInputs() {
+  const q = currentQuery();
+  document.querySelectorAll('[data-hdr-search]').forEach(i => { i.value = q; });
+}
+
 let renderSeq = 0;
 
 async function render() {
@@ -34,6 +46,7 @@ async function render() {
 
   // cerrar menú móvil al navegar
   document.getElementById('mobileMenu')?.classList.add('hidden');
+  syncSearchInputs();
 
   view.innerHTML = '<div class="flex justify-center py-24"><span class="tc-spinner tc-spinner-lg"></span></div>';
   try {
@@ -51,6 +64,50 @@ async function render() {
       </div>`;
   }
   window.scrollTo({ top: 0 });
+}
+
+// ── Altura real del header ──────────────────────────────────────
+// En móvil el header lleva dos filas (navegación + buscador), así que su alto
+// cambia. La barra de filtros de Tienda se pega justo debajo usando este valor.
+function initHeaderHeight() {
+  const header = document.querySelector('header');
+  if (!header) return;
+  const sync = () => document.documentElement.style.setProperty('--tc-header-h', `${header.offsetHeight}px`);
+  sync();
+  if (window.ResizeObserver) new ResizeObserver(sync).observe(header);
+  else window.addEventListener('resize', sync);
+}
+
+// ── Buscador del header ─────────────────────────────────────────
+/** Cualquier búsqueda lleva siempre a Tienda con el término aplicado. */
+function goSearch(raw) {
+  const q = String(raw || '').trim();
+  const target = q ? `#/tienda?q=${encodeURIComponent(q)}` : '#/tienda';
+  if (location.hash === target) render();   // misma URL: hashchange no dispara
+  else location.hash = target;
+}
+
+function initHeaderSearch() {
+  const inputs = [...document.querySelectorAll('[data-hdr-search]')];
+
+  document.querySelectorAll('.tc-hdr-search').forEach(form => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = form.querySelector('[data-hdr-search]');
+      input.blur();                          // cierra el teclado en móvil
+      goSearch(input.value);
+    });
+  });
+
+  // los dos campos (escritorio y móvil) muestran siempre lo mismo
+  inputs.forEach(i => i.addEventListener('input', () => {
+    inputs.forEach(o => { if (o !== i) o.value = i.value; });
+  }));
+
+  // la "x" del type=search limpia la búsqueda al instante
+  inputs.forEach(i => i.addEventListener('search', () => {
+    if (!i.value.trim() && currentQuery()) goSearch('');
+  }));
 }
 
 // ── Insignia del carrito ────────────────────────────────────────
@@ -122,6 +179,8 @@ function init() {
   window.addEventListener('tc:auth-changed', render);
 
   initAuth();
+  initHeaderHeight();
+  initHeaderSearch();
   updateCartBadge();
   fillFooter();
   render();

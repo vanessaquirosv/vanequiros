@@ -8,7 +8,7 @@ export const TC_CONFIG = {
   appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwCslc_tkUkdbotEM0kMbnCZVNsgsEZ6GKyoyrti52eFtkp0hcEq5QFOn2CAiHSpIU0QA/exec',
 
   // Contacto para órdenes
-  whatsappNumber: '50685836477',       // Costa Rica: +506 8583 6477
+  whatsappNumber: '50683559559',       // Costa Rica: +506 8355 9559
   instagramUser: 'techchic.cr',
 
   // Nombre visible de la tienda

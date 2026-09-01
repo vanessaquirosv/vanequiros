@@ -67,8 +67,19 @@
           <a href="#/compras" data-nav="compras" class="tc-nav-link">Compras</a>
         </nav>
 
-        <!-- Área de sesión (la llena auth.js) -->
-        <div id="authArea" class="flex items-center gap-2 shrink-0"></div>
+        <!-- Área de sesión + buscador (siempre visible) -->
+        <div class="flex min-w-0 items-center gap-2">
+          <div id="authArea" class="flex items-center gap-2 shrink-0"></div>
+
+          <form class="tc-hdr-search hidden lg:block relative shrink" role="search">
+            <input data-hdr-search type="search" autocomplete="off"
+                   class="tc-input tc-search-input w-52 lg:w-64" placeholder="Buscar productos…"
+                   aria-label="Buscar productos en la tienda">
+            <button type="submit" class="tc-search-go" aria-label="Buscar">
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+            </button>
+          </form>
+        </div>
 
         <!-- Botón menú móvil -->
         <button id="mobileMenuBtn" type="button" aria-label="Abrir menú" aria-expanded="false"
@@ -78,6 +89,16 @@
           </svg>
         </button>
       </div>
+
+      <!-- Buscador en pantallas menores: fuera del menú, siempre a la vista -->
+      <form class="tc-hdr-search lg:hidden relative pb-3" role="search">
+        <input data-hdr-search type="search" autocomplete="off"
+               class="tc-input tc-search-input w-full" placeholder="Buscar productos…"
+               aria-label="Buscar productos en la tienda">
+        <button type="submit" class="tc-search-go" aria-label="Buscar">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+        </button>
+      </form>
 
       <!-- Navegación móvil -->
       <nav id="mobileMenu" class="md:hidden hidden pb-3 flex flex-col gap-1" aria-label="Principal móvil">

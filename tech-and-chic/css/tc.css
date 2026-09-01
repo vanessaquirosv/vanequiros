@@ -620,3 +620,214 @@ body {
   border-top-color: var(--tc-fuchsia);
 }
 @keyframes tcSpin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════════
+   Buscador del header (siempre visible)
+   ═══════════════════════════════════════════════════════════════ */
+.tc-search-input {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  padding-left: 2.2rem;
+  font-size: 0.85rem;
+}
+.tc-search-input::-webkit-search-cancel-button { cursor: pointer; }
+.tc-search-go {
+  position: absolute;
+  left: 0.55rem;
+  top: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem;
+  border-radius: 0.4rem;
+  color: rgba(167, 139, 250, 0.75);
+  transition: color 0.18s ease;
+}
+.tc-hdr-search.pb-3 .tc-search-go { top: 0.45rem; }
+.tc-search-go:hover { color: #f0abfc; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Barra de filtros de Tienda
+   ═══════════════════════════════════════════════════════════════ */
+.tc-filterbar {
+  position: sticky;
+  top: var(--tc-header-h, 4rem);   /* justo bajo el header, mida lo que mida */
+  z-index: 25;
+  margin: 0 -1rem 0.75rem;
+  padding: 0.6rem 1rem;
+  background: rgba(10, 10, 11, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(139, 92, 246, 0.14);
+}
+@media (min-width: 640px) { .tc-filterbar { margin-left: -1.5rem; margin-right: -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; } }
+
+.tc-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: rgba(139, 92, 246, 0.07);
+  color: #d4d4d8;
+  font-size: 0.83rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+.tc-filter-trigger:hover { background: rgba(139, 92, 246, 0.15); color: #f5d0fe; }
+.tc-filter-trigger[aria-expanded="true"] { background: rgba(139, 92, 246, 0.2); border-color: rgba(217, 70, 239, 0.5); color: #fff; }
+.tc-filter-trigger[aria-expanded="true"] .tc-chev { transform: rotate(180deg); }
+.tc-chev { transition: transform 0.18s ease; }
+
+.tc-filter-badge {
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.3rem;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tc-sort-select { width: auto; margin-left: auto; padding-top: 0.45rem; padding-bottom: 0.45rem; font-size: 0.83rem; }
+
+/* Desplegables de escritorio */
+.tc-popover {
+  position: absolute;
+  top: calc(100% + 0.45rem);
+  left: 0;
+  z-index: 30;
+  width: 19rem;
+  padding: 0.7rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: #131217;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  animation: tcFadeIn 0.16s ease;
+}
+.tc-popover-narrow { width: 16rem; }
+.tc-pop-scroll { max-height: 20rem; overflow-y: auto; padding-right: 0.2rem; }
+
+/* Fichas de filtros activos */
+.tc-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.55rem; }
+.tc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 99px;
+  border: 1px solid rgba(217, 70, 239, 0.35);
+  background: rgba(139, 92, 246, 0.14);
+  color: #f5d0fe;
+  font-size: 0.74rem;
+  transition: background 0.15s ease;
+}
+.tc-chip:hover { background: rgba(217, 70, 239, 0.25); }
+.tc-chip-clear {
+  padding: 0.22rem 0.5rem;
+  font-size: 0.74rem;
+  color: #737373;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.tc-chip-clear:hover { color: #f5d0fe; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Panel de filtros en móvil
+   ═══════════════════════════════════════════════════════════════ */
+.tc-no-scroll { overflow: hidden; }
+
+.tc-drawer { position: fixed; inset: 0; z-index: 60; }
+.tc-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.tc-drawer.open .tc-drawer-backdrop { opacity: 1; }
+
+.tc-drawer-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.1rem 1.1rem 0 0;
+  border-top: 1px solid rgba(139, 92, 246, 0.3);
+  background: #131217;
+  transform: translateY(100%);
+  transition: transform 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.tc-drawer.open .tc-drawer-panel { transform: translateY(0); }
+
+.tc-drawer-head {
+  position: relative;              /* ancla el "asa" de arrastre */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem 0.7rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+}
+.tc-drawer-head::before {
+  content: '';
+  position: absolute;
+  top: 0.45rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.4rem;
+  height: 0.25rem;
+  border-radius: 99px;
+  background: rgba(139, 92, 246, 0.35);
+}
+.tc-drawer-x { padding: 0.3rem; border-radius: 0.5rem; color: #a3a3a3; }
+.tc-drawer-x:hover { background: rgba(139, 92, 246, 0.12); color: #f5d0fe; }
+
+/* el scroll ocurre solo aquí: el fondo queda quieto */
+.tc-drawer-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 1rem 1.1rem; }
+.tc-drawer-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.1rem;
+  padding-bottom: calc(0.8rem + env(safe-area-inset-bottom));
+  border-top: 1px solid rgba(139, 92, 246, 0.12);
+  background: #16151b;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Aviso de pago por SINPE Móvil (carrito)
+   ═══════════════════════════════════════════════════════════════ */
+.tc-sinpe-note {
+  padding: 0.85rem 0.9rem;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(217, 70, 239, 0.07));
+}
+.tc-sinpe-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.7rem;
+  background: rgba(139, 92, 246, 0.18);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  color: #c4b5fd;
+}
+.tc-sinpe-word {
+  background: linear-gradient(90deg, #a78bfa, #e879f9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+}
