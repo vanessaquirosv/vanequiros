@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vanessa Quirós — Coach Ontológica</title>
-  <meta name="description" content="Rifa benéfica de Vanessa Quirós: participa por un Echo Dot con Alexa, un bolso VERSSE y una plancha WINNING STAR, e impulsa su formación como Coach Ontológica.">
+  <title>Rifa Benéfica · Vanessa Quirós — Coach Ontológica</title>
+  <meta name="description" content="Rifa benéfica de Vanessa Quirós: 1.000 números a ₡1.000 cada uno. Gana un Echo Dot con Alexa, un bolso VERSSE o una plancha WINNING STAR. Sorteo con la serie de la Lotería Nacional del domingo 13 de diciembre de 2026.">
   <link rel="icon" type="image/png" sizes="32x32" href="/vanequiros/vanessa-quiros/favicon-32.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/vanequiros/vanessa-quiros/apple-touch-icon.png">
   <link rel="canonical" href="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_CR">
   <meta property="og:site_name" content="Vanessa Quirós">
-  <meta property="og:title" content="Vanessa Quirós — Futura Coach Ontológica">
-  <meta property="og:description" content="Rifa benéfica de Vanessa Quirós: participa por un Echo Dot con Alexa, un bolso VERSSE y una plancha WINNING STAR, e impulsa su formación como Coach Ontológica.">
+  <meta property="og:title" content="Rifa Benéfica · Vanessa Quirós — Números a ₡1.000">
+  <meta property="og:description" content="Rifa benéfica de Vanessa Quirós: 1.000 números a ₡1.000 cada uno. Gana un Echo Dot con Alexa, un bolso VERSSE o una plancha WINNING STAR. Sorteo con la serie de la Lotería Nacional del domingo 13 de diciembre de 2026.">
   <meta property="og:url" content="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/">
-  <meta property="og:image" content="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/og-image.png">
+  <meta property="og:image" content="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/og-rifa.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Logo de Vanessa Quirós">
+  <meta property="og:image:alt" content="Rifa benéfica de Vanessa Quirós: Echo Dot con Alexa, bolso VERSSE y plancha WINNING STAR. Números a ₡1.000.">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Vanessa Quirós — Futura Coach Ontológica">
-  <meta name="twitter:description" content="Rifa benéfica de Vanessa Quirós: participa por un Echo Dot con Alexa, un bolso VERSSE y una plancha WINNING STAR, e impulsa su formación como Coach Ontológica.">
-  <meta name="twitter:image" content="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/og-image.png">
-  <meta name="twitter:image:alt" content="Logo de Vanessa Quirós">
+  <meta name="twitter:title" content="Rifa Benéfica · Vanessa Quirós — Números a ₡1.000">
+  <meta name="twitter:description" content="Rifa benéfica de Vanessa Quirós: 1.000 números a ₡1.000 cada uno. Gana un Echo Dot con Alexa, un bolso VERSSE o una plancha WINNING STAR. Sorteo con la serie de la Lotería Nacional del domingo 13 de diciembre de 2026.">
+  <meta name="twitter:image" content="https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/og-rifa.png">
+  <meta name="twitter:image:alt" content="Rifa benéfica de Vanessa Quirós: Echo Dot con Alexa, bolso VERSSE y plancha WINNING STAR. Números a ₡1.000.">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -65,7 +65,7 @@
   </nav>
 
   <!-- Hero -->
-  <header class="pt-24 pb-16 px-6 text-center max-w-3xl mx-auto">
+  <header id="inicio" class="pt-24 pb-16 px-6 text-center max-w-3xl mx-auto">
     <div class="mb-8 flex justify-center">
       <img
         src="../img/VQ background t.png"
@@ -81,6 +81,34 @@
     <p class="mt-2 text-sm uppercase tracking-[0.25em] text-[#B76E79]">Futura Coach Ontológica</p>
     <p class="mt-6 font-serif text-xl sm:text-2xl italic text-neutral-700">Cocreando un futuro</p>
     <p class="mt-3 text-neutral-600">Tu apoyo expande este propósito</p>
+
+    <!-- Datos clave de la rifa -->
+    <div class="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white/80 px-5 py-4 shadow-sm">
+        <p class="text-[11px] uppercase tracking-[0.22em] text-[#B76E79]">Fecha del sorteo</p>
+        <p class="mt-1 font-serif text-lg text-[#B18588] leading-snug">Domingo 13 de diciembre de 2026</p>
+        <p class="mt-1 text-xs text-neutral-500">Con la serie de la Lotería Nacional de la JPS</p>
+        <p class="mt-1 text-xs font-semibold text-[#B18588]">Venta hasta las 6:00 p.m. de ese día</p>
+        <p id="hero-countdown" class="mt-2 text-xs font-semibold text-[#B76E79]"></p>
+      </div>
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white/80 px-5 py-4 shadow-sm">
+        <p class="text-[11px] uppercase tracking-[0.22em] text-[#B76E79]">Precio por número</p>
+        <p class="mt-1 font-serif text-2xl text-[#B18588] leading-snug">₡1.000</p>
+        <p class="mt-1 text-xs text-neutral-500">Precio único: todos los números valen lo mismo, compres uno o compres diez.</p>
+        <p class="mt-2 text-xs font-semibold text-[#B76E79]">1.000 números · del 000 al 999</p>
+      </div>
+    </div>
+
+    <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="#rifa"
+         class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#B18588] px-8 py-4 text-sm sm:text-base font-semibold text-white shadow-lg hover:bg-[#B76E79] transition-colors">
+        Comprar mis números
+      </a>
+      <a href="#premios"
+         class="inline-flex items-center justify-center rounded-xl border border-[#E8C5C8] px-6 py-4 text-sm font-semibold text-[#B18588] hover:bg-white transition-colors">
+        Ver los premios
+      </a>
+    </div>
   </header>
 
   <!-- Premios y Propósito -->
@@ -92,6 +120,11 @@
         <strong class="text-[#B76E79]">Coach Ontológica</strong>. Cada número que adquieres es un aporte directo
         a este sueño y, a la vez, tu oportunidad de llevarte uno de estos tres premios. Gracias por ser
         parte de este camino de crecimiento y transformación.
+      </p>
+
+      <p class="text-center mb-12 -mt-8 text-sm text-neutral-500">
+        Sorteo: <strong class="text-[#B18588]">domingo 13 de diciembre de 2026</strong>, con la serie de la
+        Lotería Nacional de la JPS · <strong class="text-[#B18588]">₡1.000 por número</strong>
       </p>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -152,7 +185,22 @@
   <!-- ¿Cómo se sortea? -->
   <section id="como-sortea" class="px-6 py-16">
     <div class="max-w-3xl mx-auto">
-      <h2 class="font-serif text-3xl text-[#B18588] text-center mb-10">¿Cómo se sortea?</h2>
+      <h2 class="font-serif text-3xl text-[#B18588] text-center mb-6">¿Cómo se sortea?</h2>
+
+      <!-- Fecha del sorteo -->
+      <div class="rounded-2xl border-2 border-[#B76E79]/40 bg-white p-5 sm:p-6 mb-10 text-center">
+        <p class="text-[11px] uppercase tracking-[0.25em] text-[#B76E79]">Fecha del sorteo</p>
+        <p class="mt-2 font-serif text-2xl sm:text-3xl text-[#B18588]">Domingo 13 de diciembre de 2026</p>
+        <p class="mt-3 inline-flex items-center rounded-full bg-[#B18588] px-5 py-2 text-sm font-semibold text-white">
+          La venta de números cierra a las 6:00 p.m. de ese mismo día
+        </p>
+        <p class="mt-3 text-sm text-neutral-600 leading-relaxed">
+          El resultado se define con la <strong>serie del sorteo de la Lotería Nacional de la JPS</strong>
+          celebrado ese día. Si la JPS reprograma ese sorteo, la rifa se resolverá con la serie del sorteo
+          de Lotería Nacional inmediatamente posterior y se avisará por esta página.
+        </p>
+        <p id="fecha-countdown" class="mt-3 text-sm font-semibold text-[#B76E79]"></p>
+      </div>
 
       <!-- Mecánica del sorteo (Lotería Nacional JPS) -->
       <div class="rounded-2xl border border-[#E8C5C8] bg-white p-5 sm:p-8 mb-10">
@@ -188,7 +236,7 @@
           <span class="flex-shrink-0 w-8 h-8 rounded-full bg-[#B18588] text-white font-semibold flex items-center justify-center">2</span>
           <p class="text-sm sm:text-base text-neutral-700 leading-relaxed pt-1">
             Revisa tu selección en el <strong>carrito</strong>. Ahí verás la cantidad de boletos y el total
-            según la promoción por volumen.
+            a pagar: <strong>₡1.000 por cada número</strong>, sin importar cuántos elijas.
           </p>
         </li>
         <li class="flex gap-4">
@@ -216,8 +264,11 @@
       </ol>
 
       <div class="rounded-xl bg-[#FAF7F2] border border-[#E8C5C8]/60 p-4 text-center">
-        <p class="text-sm font-semibold text-[#B18588] mb-1">Promoción por cantidad</p>
-        <p class="text-sm text-neutral-600">1 = ₡2,000 · 2 = ₡3,500 · 3 = ₡4,200 · 4 = ₡4,800 · 5 o más = ₡1,000 c/u</p>
+        <p class="text-sm font-semibold text-[#B18588] mb-1">Precio único por número</p>
+        <p class="text-sm text-neutral-600">
+          Cada número cuesta <strong class="text-[#B76E79]">₡1.000</strong>. Sin escalas ni descuentos por cantidad:
+          1 número = ₡1.000 · 3 números = ₡3.000 · 5 números = ₡5.000 · 10 números = ₡10.000.
+        </p>
       </div>
     </div>
   </section>
@@ -273,35 +324,146 @@
   </section>
 
   <!-- Footer -->
-  <footer class="px-6 py-10 text-sm text-neutral-500 border-t border-[#E8C5C8]/40 mt-8">
-    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-y-8 md:gap-x-6 md:items-center">
-      <!-- Columna izquierda: redes sociales -->
-      <div class="flex flex-col gap-2 justify-self-start">
-        <a href="https://www.instagram.com/vanessaquiros8?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2.5 text-neutral-500 hover:text-[#B18588] transition-colors" aria-label="Instagram Vanessa Quirós">
-          <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
-          <span>Instagram · @vanessaquiros8</span>
-        </a>
-        <a href="https://www.facebook.com/vanessa.quirosvillalobos" target="_blank" rel="noopener noreferrer"
-           class="inline-flex items-center gap-2.5 text-neutral-500 hover:text-[#B18588] transition-colors" aria-label="Facebook Vanessa Quirós">
-          <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
-          <span>Facebook · Vanessa Quirós</span>
-        </a>
-      </div>
+  <footer class="w-full mt-16" aria-label="Pie de página">
 
-      <!-- Columna central: derechos + volver -->
-      <div class="flex flex-col items-center text-center justify-self-center">
-        <p>&copy; <span id="year"></span> Vanessa Quirós. Todos los derechos reservados.</p>
-        <a href="../index.html" class="mt-3 text-[#B18588] hover:text-[#B76E79] transition-colors">Volver al portal principal</a>
+    <!-- CTA: impulso a comprar números -->
+    <div class="w-full bg-gradient-to-br from-[#B18588] via-[#B76E79] to-[#9a5a64] px-6 py-12 sm:py-14">
+      <div class="max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-8 text-center lg:text-left">
+        <div class="max-w-xl">
+          <p class="text-xs uppercase tracking-[0.3em] text-white/80 mb-2">Tu número, tu oportunidad</p>
+          <h2 class="font-serif text-2xl sm:text-3xl font-semibold text-white leading-snug">
+            ¿Listo para participar y apoyar este sueño?
+          </h2>
+          <p class="mt-3 text-sm sm:text-base text-white/90 leading-relaxed">
+            Elige tus números en la cuadrícula, realiza tu SINPE y sube tu comprobante.
+            Cada boleto te acerca a los premios y a mi formación como Coach Ontológica.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 shrink-0 w-full sm:w-auto">
+          <a href="#rifa"
+             class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-sm sm:text-base font-bold text-[#B76E79] shadow-lg hover:bg-[#FAF7F2] hover:shadow-xl transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+            </svg>
+            Elegir mis números ahora
+          </a>
+          <a href="#como-sortea"
+             class="inline-flex items-center justify-center rounded-xl border-2 border-white/60 px-6 py-4 text-sm font-semibold text-white hover:bg-white/10 transition-colors">
+            Ver cómo funciona
+          </a>
+        </div>
       </div>
-
-      <!-- Columna derecha vacía (equilibra el layout en desktop) -->
-      <div class="hidden md:block" aria-hidden="true"></div>
     </div>
+
+    <!-- Contenido principal del footer -->
+    <div class="w-full bg-neutral-900 text-neutral-300 px-6 py-14 sm:py-16">
+      <div class="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
+
+        <!-- Marca -->
+        <div class="sm:col-span-2 lg:col-span-1">
+          <a href="#inicio" class="inline-block mb-4">
+            <img src="../img/VQ background t.png" alt="Vanessa Quirós" width="72" height="72"
+                 class="h-16 w-auto object-contain brightness-110" loading="lazy" decoding="async">
+          </a>
+          <p class="font-serif text-lg text-white">Vanessa Quirós</p>
+          <p class="text-xs uppercase tracking-[0.2em] text-[#E8C5C8] mt-1">Futura Coach Ontológica</p>
+          <p class="mt-4 text-sm text-neutral-400 leading-relaxed max-w-xs">
+            Rifa benéfica para impulsar mi formación profesional. Gracias por creer en este propósito
+            y por ser parte de la comunidad que lo hace posible.
+          </p>
+        </div>
+
+        <!-- Navegación -->
+        <nav aria-label="Secciones de la página">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#E8C5C8] mb-4">Navegación</h3>
+          <ul class="space-y-2.5 text-sm">
+            <li><a href="#inicio" class="hover:text-white transition-colors">Inicio</a></li>
+            <li><a href="#premios" class="hover:text-white transition-colors">Premios del sorteo</a></li>
+            <li><a href="#como-sortea" class="hover:text-white transition-colors">¿Cómo se sortea?</a></li>
+            <li>
+              <a href="#rifa" class="font-semibold text-[#E8C5C8] hover:text-white transition-colors">
+                Rifa Benéfica — Comprar números
+              </a>
+            </li>
+            <li><a href="../index.html" class="hover:text-white transition-colors">Portal VaneQuiros</a></li>
+          </ul>
+        </nav>
+
+        <!-- Participar -->
+        <div>
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#E8C5C8] mb-4">Participar</h3>
+          <ul class="space-y-2.5 text-sm text-neutral-400">
+            <li>1.000 números · del 000 al 999</li>
+            <li><strong class="text-white font-medium">₡1.000</strong> por número (precio único)</li>
+            <li>SINPE Móvil: <strong class="text-white font-medium">8583 6477</strong></li>
+            <li>A nombre de Vanessa Quirós</li>
+            <li class="pt-2 text-neutral-500 text-xs leading-relaxed">
+              Sorteo: domingo 13 de diciembre de 2026, con la serie de la Lotería Nacional de la JPS.
+              La venta de números cierra a las 6:00 p.m. de ese día.
+            </li>
+          </ul>
+          <a href="#rifa"
+             class="mt-5 inline-flex items-center text-sm font-semibold text-[#E8C5C8] hover:text-white transition-colors">
+            Ir a la cuadrícula &rarr;
+          </a>
+        </div>
+
+        <!-- Contacto y redes -->
+        <div>
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-[#E8C5C8] mb-4">Contacto</h3>
+          <ul class="space-y-3 text-sm">
+            <li>
+              <a href="https://www.instagram.com/vanessaquiros8?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                 target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2.5 text-neutral-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                @vanessaquiros8
+              </a>
+            </li>
+            <li>
+              <a href="https://www.facebook.com/vanessa.quirosvillalobos"
+                 target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center gap-2.5 text-neutral-400 hover:text-white transition-colors">
+                <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                </svg>
+                Vanessa Quirós
+              </a>
+            </li>
+          </ul>
+          <p class="mt-5 text-xs text-neutral-500 leading-relaxed">
+            Dudas sobre tu compra o comprobante: escríbenos por el canal que elegiste al registrarte.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Barra inferior: copyright y legal -->
+    <div class="w-full bg-neutral-950 border-t border-neutral-800 px-6 py-5">
+      <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
+        <p class="text-center sm:text-left leading-relaxed">
+          &copy; <span id="year"></span> Vanessa Quirós Villalobos. Todos los derechos reservados.
+          El contenido, la marca y los materiales de este sitio son propiedad de Vanessa Quirós.
+          Queda prohibida su reproducción total o parcial sin autorización expresa.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4 shrink-0">
+          <button type="button" id="btn-open-terms"
+                  class="text-[#E8C5C8] hover:text-white font-medium transition-colors underline-offset-2 hover:underline">
+            Términos y condiciones
+          </button>
+          <a href="#rifa" class="text-[#E8C5C8] hover:text-white font-semibold transition-colors">
+            Comprar números &uarr;
+          </a>
+          <a href="banner.html" class="text-neutral-600 hover:text-neutral-400 transition-colors">
+            Banner promocional
+          </a>
+        </div>
+      </div>
+    </div>
+
   </footer>
 
   <!-- Floating Cart -->
@@ -338,6 +500,123 @@
     <span id="fab-count" class="text-sm font-bold">0</span>
   </button>
 
+  <!-- Términos y Condiciones Modal -->
+  <div id="modal-terms" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="modal-terms-title">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-modal="terms"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+      <div class="pointer-events-auto bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-[#E8C5C8] max-h-[calc(100vh-2rem)] flex flex-col">
+        <div class="flex items-start justify-between gap-4 p-6 sm:p-8 border-b border-[#E8C5C8]/50 shrink-0">
+          <div>
+            <h3 id="modal-terms-title" class="font-serif text-2xl text-[#B18588]">Términos y condiciones</h3>
+            <p class="text-xs text-neutral-500 mt-1">Rifa benéfica · Vanessa Quirós</p>
+          </div>
+          <button type="button" data-close-modal="terms" class="text-neutral-400 hover:text-[#B18588] p-1" aria-label="Cerrar">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="overflow-y-auto p-6 sm:p-8 text-sm text-neutral-700 leading-relaxed space-y-5">
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">1. Objeto y finalidad</h4>
+            <p>La presente rifa benéfica es organizada por <strong>Vanessa Quirós Villalobos</strong> con el fin de recaudar fondos para financiar su formación como <strong>Coach Ontológica</strong>. La participación implica el conocimiento y aceptación de estos términos.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">2. Organizadora</h4>
+            <p>La organizadora, responsable y beneficiaria de los fondos recaudados es Vanessa Quirós Villalobos. Puede contactarse a través de los canales oficiales publicados en este sitio (Instagram, Facebook o el medio de notificación indicado en su compra).</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">3. Mecánica del sorteo</h4>
+            <p>La venta de números se cierra a las <strong>6:00 p.m. del domingo 13 de diciembre de 2026</strong>, hora a partir de la cual no se aceptan nuevas reservas ni comprobantes. El sorteo se realizará ese mismo <strong>domingo 13 de diciembre de 2026</strong> con base en el sorteo oficial de la <strong>Lotería Nacional de Costa Rica (JPS)</strong> de esa fecha. El boleto ganador se obtiene combinando el <strong>primer dígito de la serie</strong> del premio mayor (cuadrícula 0–9) con los <strong>últimos dos dígitos de la serie</strong> (00–99). Existen 1.000 boletos numerados del 000 al 999. El proceso es público, verificable y ajeno al criterio discrecional de la organizadora.</p>
+            <p class="mt-2">Si la JPS suspende, reprograma o anula el sorteo de Lotería Nacional del 13 de diciembre de 2026, la rifa se resolverá con la serie del sorteo de Lotería Nacional inmediatamente posterior, y la nueva fecha se comunicará en esta página y por los canales oficiales de la organizadora.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">4. Premios</h4>
+            <ul class="list-disc list-inside space-y-1 ml-1">
+              <li><strong>Primer premio:</strong> Echo Dot con Alexa (asistente inteligente Amazon).</li>
+              <li><strong>Segundo premio:</strong> Bolso marca VERSSE, artículo nuevo.</li>
+              <li><strong>Tercer premio:</strong> Plancha de vapor marca WINNING STAR (modelo ST-2024).</li>
+            </ul>
+            <p class="mt-2">Los premios se entregan en el estado en que se describen en la página. No son canjeables por dinero en efectivo salvo acuerdo expreso por escrito de la organizadora.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">5. Precio de los boletos</h4>
+            <p>El precio es único: <strong>₡1.000 por cada boleto</strong>, sin escalas, descuentos ni promociones por cantidad. El total a pagar corresponde siempre a la cantidad de boletos seleccionados multiplicada por ₡1.000. La organizadora se reserva el derecho de modificar el precio antes de una compra confirmada, sin afectar órdenes ya validadas.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">6. Proceso de compra y reserva</h4>
+            <p>Para participar, el usuario debe: (a) seleccionar números disponibles en la cuadrícula del sitio; (b) realizar el pago por <strong>SINPE Móvil al 8583 6477</strong>, a nombre de Vanessa Quirós; (c) completar el formulario con nombre, medio de contacto y captura del comprobante. Al enviar el formulario, los números quedan en estado <strong>reservado</strong> de forma temporal.</p>
+            <p class="mt-2">Una reserva sin comprobante válido o sin pago verificable puede ser liberada automáticamente para que otros participantes puedan adquirir esos números. La organizadora no garantiza la disponibilidad de números reservados cuyo pago no haya sido confirmado en el plazo indicado.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">7. Confirmación del pago</h4>
+            <p>La compra se considera <strong>confirmada</strong> únicamente cuando la organizadora valida el comprobante SINPE y notifica al participante por el medio elegido (WhatsApp, correo electrónico o Instagram). Hasta ese momento, la participación no otorga derechos definitivos sobre los números seleccionados.</p>
+            <p class="mt-2">Si el comprobante es ilegible, no corresponde al monto indicado o no puede verificarse, la organizadora podrá rechazar la orden y liberar los números, contactando al participante cuando sea posible.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">8. Elegibilidad</h4>
+            <p>Pueden participar personas mayores de edad con capacidad legal para contratar, residentes en Costa Rica o con medio de pago y entrega de premio viable en el territorio nacional. La organizadora podrá rechazar participaciones que considere fraudulentas o inconsistentes con estos términos.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">9. Entrega de premios</h4>
+            <p>Los ganadores serán contactados por los medios registrados en su compra o por los canales oficiales de Vanessa Quirós. La entrega se coordinará de forma directa en Costa Rica. Si el ganador no responde en un plazo razonable (30 días naturales desde el anuncio), la organizadora podrá realizar un nuevo intento de contacto o disponer del premio conforme a la legislación aplicable.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">10. Cancelaciones y reembolsos</h4>
+            <p>Las órdenes rechazadas o no confirmadas no generan obligación de entrega de números ni de devolución automática, salvo que el participante haya realizado un pago verificable sin poder completar la reserva por error del sistema; en ese caso, la organizadora gestionará la devolución o reasignación de buena fe. No se aceptan devoluciones una vez confirmado el pago y asignados los números, salvo disposición legal en contrario.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">11. Datos personales</h4>
+            <p>Los datos proporcionados (nombre, teléfono, correo, usuario de Instagram y comprobante de pago) se utilizan exclusivamente para gestionar la rifa, validar pagos, comunicar el estado de la orden y contactar a ganadores. Los comprobantes se almacenan de forma segura en infraestructura en la nube. No se venden ni ceden a terceros con fines comerciales.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">12. Uso del sitio web</h4>
+            <p>El participante se compromete a proporcionar información veraz y a no manipular el sistema de reservas. La organizadora no se hace responsable por interrupciones del servicio, fallas de conectividad del usuario o indisponibilidad temporal de números por reservas simultáneas.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">13. Propiedad intelectual</h4>
+            <p>El contenido de este sitio —incluidos textos, imágenes, marca y diseño— es propiedad de Vanessa Quirós o se utiliza con autorización. Queda prohibida su reproducción sin consentimiento expreso.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">14. Modificaciones</h4>
+            <p>La organizadora puede actualizar estos términos y la información de la rifa publicando la versión vigente en esta página. Las compras confirmadas antes de un cambio se regirán por los términos aceptados al momento de la transacción, en lo que resulte más favorable al participante en materia de premios ya adquiridos.</p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-[#B18588] mb-2">15. Ley aplicable</h4>
+            <p>Estos términos se rigen por las leyes de la República de Costa Rica. Cualquier controversia se someterá a los tribunales competentes de Costa Rica, sin perjuicio de que las partes procuren una solución amistosa previa.</p>
+          </section>
+
+          <p class="text-xs text-neutral-500 pt-2 border-t border-[#E8C5C8]/50">
+            Última actualización: setiembre de 2026. Al participar en la rifa benéfica declaras haber leído y aceptado estos términos.
+          </p>
+        </div>
+        <div class="p-6 sm:p-8 pt-0 shrink-0 flex flex-col sm:flex-row gap-3">
+          <button type="button" data-close-modal="terms"
+            class="flex-1 rounded-xl border border-[#E8C5C8] py-3 font-medium text-[#B18588] hover:bg-[#FAF7F2] transition-colors">
+            Cerrar
+          </button>
+          <a href="#rifa" data-close-modal="terms"
+             class="flex-1 inline-flex items-center justify-center rounded-xl bg-[#B18588] py-3 text-white font-semibold hover:bg-[#B76E79] transition-colors text-center">
+            Ir a comprar números
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Raffle Checkout Modal -->
   <div id="modal-checkout" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true" aria-labelledby="modal-checkout-title">
     <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" data-close-modal="checkout"></div>
@@ -356,14 +635,14 @@
         </div>
 
         <div class="rounded-xl bg-white p-4 border border-[#E8C5C8]/60 mb-5">
-          <p class="text-sm font-semibold text-[#B18588] mb-2">Resumen y promoción</p>
+          <p class="text-sm font-semibold text-[#B18588] mb-2">Resumen de tu compra</p>
           <div class="text-sm text-neutral-700 space-y-1">
             <div class="flex items-center justify-between">
               <span>Boletos seleccionados</span>
               <span class="font-semibold" id="checkout-qty">0</span>
             </div>
             <div class="flex items-center justify-between">
-              <span>Precio unitario efectivo</span>
+              <span>Precio por número</span>
               <span class="font-semibold" id="checkout-unit">₡0</span>
             </div>
             <div class="h-px bg-[#E8C5C8]/60 my-2"></div>
@@ -373,8 +652,8 @@
             </div>
           </div>
           <p class="mt-3 text-xs text-neutral-500 leading-relaxed">
-            Promoción:
-            1=₡2,000 · 2=₡3,500 · 3=₡4,200 · 4=₡4,800 · 5+=₡1,000 c/u
+            Precio único: ₡1.000 por número. Sorteo el domingo 13 de diciembre de 2026 con la serie
+            de la Lotería Nacional de la JPS.
           </p>
         </div>
 
@@ -536,17 +815,37 @@
     }
 
     function formatCRC(amount) {
-      return `₡${Number(amount || 0).toLocaleString("es-CR")}`;
+      // Formato local: separador de miles con punto (₡1.000, ₡12.500).
+      const n = Math.round(Number(amount) || 0);
+      return `₡${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
     }
+
+    // Precio unico: cada boleto vale 1.000 colones, sin escalonado por cantidad.
+    const TICKET_PRICE_CRC = 1000;
 
     function calcPricing(qty) {
       const n = Number(qty || 0);
       if (n <= 0) return { qty: 0, unitEffective: 0, total: 0 };
-      if (n === 1) return { qty: 1, unitEffective: 2000, total: 2000 };
-      if (n === 2) return { qty: 2, unitEffective: 1750, total: 3500 };
-      if (n === 3) return { qty: 3, unitEffective: 1400, total: 4200 };
-      if (n === 4) return { qty: 4, unitEffective: 1200, total: 4800 };
-      return { qty: n, unitEffective: 1000, total: n * 1000 };
+      return { qty: n, unitEffective: TICKET_PRICE_CRC, total: n * TICKET_PRICE_CRC };
+    }
+
+    // Fecha del sorteo: domingo 13 de diciembre de 2026 (hora de Costa Rica, UTC-6).
+    const DRAW_DATE = new Date("2026-12-13T00:00:00-06:00");
+
+    function renderDrawCountdown() {
+      const targets = ["hero-countdown", "fecha-countdown"]
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+      if (!targets.length) return;
+
+      const diffDays = Math.ceil((DRAW_DATE.getTime() - Date.now()) / 86400000);
+      let text;
+      if (diffDays > 1) text = `Faltan ${diffDays} días para el sorteo`;
+      else if (diffDays === 1) text = "¡Falta 1 día para el sorteo!";
+      else if (diffDays === 0) text = "¡El sorteo es hoy!";
+      else text = "El sorteo ya se realizó";
+
+      targets.forEach((el) => { el.textContent = text; });
     }
 
     function formatTicketId(id) {
@@ -933,6 +1232,22 @@
       hideCheckoutFeedback();
     }
 
+    function syncBodyModalLock() {
+      const checkoutOpen = !document.getElementById("modal-checkout").classList.contains("hidden");
+      const termsOpen = !document.getElementById("modal-terms").classList.contains("hidden");
+      document.body.classList.toggle("modal-open", checkoutOpen || termsOpen);
+    }
+
+    function openModalTerms() {
+      document.getElementById("modal-terms").classList.remove("hidden");
+      syncBodyModalLock();
+    }
+
+    function closeModalTerms() {
+      document.getElementById("modal-terms").classList.add("hidden");
+      syncBodyModalLock();
+    }
+
     function openModalCheckout() {
       if (!firebaseReady) {
         showRifaToast("Aún estamos cargando los boletos. Intenta en unos segundos.", "info");
@@ -941,7 +1256,7 @@
       resetCheckoutModalState();
       const modal = document.getElementById("modal-checkout");
       modal.classList.remove("hidden");
-      document.body.classList.add("modal-open");
+      syncBodyModalLock();
       syncCheckoutSummary();
       if (!authReady) {
         initAnonymousAuth();
@@ -953,7 +1268,7 @@
     function closeModalCheckout() {
       resetCheckoutModalState();
       document.getElementById("modal-checkout").classList.add("hidden");
-      document.body.classList.remove("modal-open");
+      syncBodyModalLock();
     }
 
     function syncCheckoutSummary() {
@@ -1175,6 +1490,12 @@
         el.addEventListener("click", closeModalCheckout);
       });
 
+      document.querySelectorAll('[data-close-modal="terms"]').forEach((el) => {
+        el.addEventListener("click", closeModalTerms);
+      });
+
+      document.getElementById("btn-open-terms")?.addEventListener("click", openModalTerms);
+
       document.getElementById("checkout-success-close")?.addEventListener("click", closeModalCheckout);
 
       document.getElementById("btn-checkout").addEventListener("click", () => {
@@ -1284,6 +1605,7 @@
 
     try {
       document.getElementById("year").textContent = new Date().getFullYear();
+      renderDrawCountdown();
 
       // Notificaciones UI
       ["notif-whatsapp", "notif-email", "notif-instagram"].forEach((id) => {

@@ -8,7 +8,7 @@ Documento de referencia para el backend Firebase del módulo de rifa benéfica d
 | **Consola** | [Firebase Console — vanessaquiros-co](https://console.firebase.google.com/project/vanessaquiros-co) |
 | **Producto principal** | Cloud Firestore |
 | **Frontend vinculado** | `vanessa-quiros/index.html` (rifa 1000 números, #000–#999) |
-| **Moneda rifa** | Colones (₡) — `TICKET_PRICE = 2000` |
+| **Moneda rifa** | Colones (₡) — `TICKET_PRICE_CRC = 1000` (precio único por boleto) |
 | **Moneda donaciones** | USD (sección `#donar`, independiente de rifa) |
 
 ---
@@ -101,8 +101,8 @@ Document ID = auto-generado por Firestore.
     { id: 345, numero: "345" },
     { id: 122, numero: "122" }
   ],
-  total: 4000,                // recalculado en servidor
-  precioUnitario: 2000,
+  total: 2000,                // recalculado en servidor (n boletos x 1000)
+  precioUnitario: 1000,
   status: "pendiente_pago",   // "pendiente_pago" | "pagado" | "cancelado" | "expirado"
   createdAt: Timestamp,
   paidAt: null,
@@ -119,7 +119,7 @@ En `vanessa-quiros/index.html`, al confirmar compra se genera:
   nombre, telefono, instagram,
   boletos: [{ id, numero }],  // numero formateado 3 dígitos
   total,
-  precioUnitario: 2000
+  precioUnitario: 1000
 }
 ```
 

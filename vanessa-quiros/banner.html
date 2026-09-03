@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de banner — Rifa Vanessa Quirós</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .serif { font-family: 'Playfair Display', Georgia, serif; }
+    #preview { aspect-ratio: 9 / 16; }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FAF7F2] text-neutral-800 antialiased">
+
+  <header class="border-b border-[#E8C5C8]/60 bg-white/80 backdrop-blur sticky top-0 z-20">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div>
+        <p class="serif text-lg text-[#B18588] leading-none">Generador de banner</p>
+        <p class="text-[11px] uppercase tracking-[0.18em] text-[#B76E79] mt-1">Rifa benéfica · Vanessa Quirós</p>
+      </div>
+      <a href="index.html" class="text-xs text-[#B18588] hover:text-[#B76E79] shrink-0">&larr; Ir a la rifa</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[minmax(0,380px)_1fr] gap-8 items-start">
+
+    <!-- Vista previa -->
+    <section class="lg:sticky lg:top-24">
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white p-3 shadow-sm">
+        <canvas id="preview" width="1080" height="1920" class="block w-full rounded-xl bg-[#F3E7E4]"></canvas>
+      </div>
+      <p class="mt-2 text-center text-[11px] text-neutral-500">
+        1080 × 1920 px (9:16) · listo para estado de WhatsApp
+      </p>
+
+      <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <button type="button" id="btn-download"
+          class="rounded-xl bg-[#B18588] py-3 px-4 text-white font-semibold text-sm hover:bg-[#B76E79] transition-colors">
+          Descargar imagen
+        </button>
+        <button type="button" id="btn-share"
+          class="hidden rounded-xl border border-[#B18588] py-3 px-4 text-[#B18588] font-semibold text-sm hover:bg-white transition-colors">
+          Compartir
+        </button>
+        <button type="button" id="btn-shuffle"
+          class="rounded-xl border border-[#E8C5C8] bg-white py-3 px-4 text-[#B18588] font-semibold text-sm hover:bg-[#FAF7F2] transition-colors sm:col-span-2">
+          Otro diseño
+        </button>
+      </div>
+
+      <p id="design-label" class="mt-3 text-center text-[11px] text-neutral-500"></p>
+      <p class="mt-1 text-center text-[11px] text-neutral-400 sm:hidden">
+        En iPhone también puedes mantener presionada la imagen para guardarla.
+      </p>
+    </section>
+
+    <!-- Controles -->
+    <section class="space-y-5">
+
+      <!-- Datos en vivo -->
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white p-5">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-semibold text-[#B18588]">Datos de hoy</h2>
+          <button type="button" id="btn-refresh"
+            class="text-xs font-medium text-[#B76E79] hover:underline">Actualizar</button>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="rounded-xl bg-[#FAF7F2] border border-[#E8C5C8]/60 p-3">
+            <p class="serif text-2xl text-[#B18588]" id="stat-dias">—</p>
+            <p class="text-[11px] text-neutral-500 mt-1 leading-tight">días para el sorteo</p>
+          </div>
+          <div class="rounded-xl bg-[#FAF7F2] border border-[#E8C5C8]/60 p-3">
+            <p class="serif text-2xl text-[#B18588]" id="stat-disp">—</p>
+            <p class="text-[11px] text-neutral-500 mt-1 leading-tight">números disponibles</p>
+          </div>
+          <div class="rounded-xl bg-[#FAF7F2] border border-[#E8C5C8]/60 p-3">
+            <p class="serif text-2xl text-[#B18588]" id="stat-vend">—</p>
+            <p class="text-[11px] text-neutral-500 mt-1 leading-tight">ya apartados</p>
+          </div>
+        </div>
+        <p id="data-status" class="mt-3 text-xs text-neutral-500">Conectando con la base de datos…</p>
+
+        <div id="manual-box" class="hidden mt-3 rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <label for="manual-disp" class="block text-xs font-medium text-amber-900 mb-1">
+            Escribe cuántos números quedan disponibles:
+          </label>
+          <input id="manual-disp" type="number" min="0" max="1000" value="1000"
+            class="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm">
+        </div>
+      </div>
+
+      <!-- Opciones de diseño -->
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white p-5 space-y-4">
+        <h2 class="font-semibold text-[#B18588]">Diseño</h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="sel-theme" class="block text-xs font-medium text-neutral-600 mb-1">Estilo de color</label>
+            <select id="sel-theme" class="w-full rounded-lg border border-[#E8C5C8] px-3 py-2 text-sm bg-white"></select>
+          </div>
+          <div>
+            <label for="sel-layout" class="block text-xs font-medium text-neutral-600 mb-1">Acomodo de premios</label>
+            <select id="sel-layout" class="w-full rounded-lg border border-[#E8C5C8] px-3 py-2 text-sm bg-white"></select>
+          </div>
+        </div>
+
+        <div>
+          <label for="sel-headline" class="block text-xs font-medium text-neutral-600 mb-1">Frase principal</label>
+          <select id="sel-headline" class="w-full rounded-lg border border-[#E8C5C8] px-3 py-2 text-sm bg-white"></select>
+        </div>
+
+        <div>
+          <label for="inp-linknote" class="block text-xs font-medium text-neutral-600 mb-1">
+            Línea bajo «página web» <span class="text-neutral-400">(opcional)</span>
+          </label>
+          <input id="inp-linknote" type="text" maxlength="46" value="El enlace va en este mismo mensaje"
+            class="w-full rounded-lg border border-[#E8C5C8] px-3 py-2 text-sm">
+        </div>
+
+        <p class="text-xs text-neutral-500 leading-relaxed">
+          Con «Automático» el diseño cambia solo cada día, así la publicación nunca se ve igual.
+        </p>
+      </div>
+
+      <!-- Texto para WhatsApp -->
+      <div class="rounded-2xl border border-[#E8C5C8] bg-white p-5">
+        <div class="flex items-center justify-between gap-3 mb-3">
+          <h2 class="font-semibold text-[#B18588]">Texto para WhatsApp</h2>
+          <button type="button" id="btn-copy"
+            class="rounded-lg bg-[#B18588] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#B76E79] transition-colors">
+            Copiar
+          </button>
+        </div>
+        <textarea id="wa-text" rows="14" readonly
+          class="w-full rounded-xl border border-[#E8C5C8] bg-[#FAF7F2] p-3 text-xs leading-relaxed text-neutral-700"></textarea>
+        <div class="mt-3 rounded-xl bg-[#FAF7F2] border border-[#E8C5C8]/60 p-3 text-xs text-neutral-600 leading-relaxed">
+          <strong class="text-[#B18588]">Para que se vea la vista previa del enlace:</strong>
+          manda primero la imagen y luego este texto como mensaje aparte. Si pegas el enlace
+          como pie de foto, WhatsApp no muestra la tarjeta con los premios.
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-4 pb-10 pt-2 text-center text-[11px] text-neutral-400">
+    Página de uso interno para generar la publicidad de la rifa.
+  </footer>
+
+  <script type="module">
+    // =========================================================================
+    // === Constantes de la rifa ===
+    // =========================================================================
+
+    const W = 1080;
+    const H = 1920;
+
+    const TOTAL_TICKETS = 1000;
+    const PRICE = 1000;
+    const SITE_URL = "https://vanessaquirosv.github.io/vanequiros/vanessa-quiros/";
+    const PHONE = "8583 6477";
+
+    // Sorteo y cierre de ventas: 13 de diciembre de 2026, 6:00 p.m. de Costa Rica.
+    const DRAW_AT = new Date("2026-12-13T18:00:00-06:00");
+    const DRAW_DATE_TEXT = "Domingo 13 de diciembre de 2026";
+
+    const PRIZES = [
+      {
+        badge: "1er premio",
+        name: "Echo Dot con Alexa",
+        note: "Asistente inteligente de Amazon",
+        src: "banner-assets/premio-alexa.webp",
+      },
+      {
+        badge: "2do premio",
+        name: "Bolso VERSSE",
+        note: "Nuevo, con etiqueta",
+        src: "banner-assets/premio-bolso.webp",
+      },
+      {
+        badge: "3er premio",
+        name: "Plancha WINNING STAR",
+        note: "De vapor · modelo ST-2024",
+        src: "banner-assets/premio-plancha.webp",
+      },
+    ];
+
+    // =========================================================================
+    // === Catálogo de variantes (lo que hace que el banner cambie) ===
+    // =========================================================================
+
+    const THEMES = [
+      {
+        id: "blush",
+        label: "Rosa suave",
+        bg: ["#FFFAF8", "#F2D9DD"],
+        ink: "#57403F",
+        soft: "#8C6E6E",
+        accent: "#B76E79",
+        onAccent: "#FFFFFF",
+        card: "#FFFFFF",
+        cardLine: "rgba(177,133,136,0.28)",
+        shadow: "rgba(120,80,84,0.16)",
+        dark: false,
+      },
+      {
+        id: "marfil",
+        label: "Marfil elegante",
+        bg: ["#FDFBF7", "#EFE3D8"],
+        ink: "#4A4139",
+        soft: "#8A7A6C",
+        accent: "#B18588",
+        onAccent: "#FFFFFF",
+        card: "#FFFFFF",
+        cardLine: "rgba(150,125,110,0.24)",
+        shadow: "rgba(110,90,75,0.14)",
+        dark: false,
+      },
+      {
+        id: "noche",
+        label: "Noche rosé",
+        bg: ["#2B1F22", "#4B3339"],
+        ink: "#FBF1F0",
+        soft: "#D9BDBE",
+        accent: "#E8C5C8",
+        onAccent: "#3A2529",
+        card: "rgba(255,255,255,0.09)",
+        cardLine: "rgba(232,197,200,0.32)",
+        shadow: "rgba(0,0,0,0.35)",
+        dark: true,
+      },
+      {
+        id: "rosegold",
+        label: "Rose gold",
+        bg: ["#C68F95", "#8E5A63"],
+        ink: "#FFFFFF",
+        soft: "#F6E2E4",
+        accent: "#FFFFFF",
+        onAccent: "#9A5A64",
+        card: "rgba(255,255,255,0.16)",
+        cardLine: "rgba(255,255,255,0.42)",
+        shadow: "rgba(70,35,42,0.28)",
+        dark: true,
+      },
+      {
+        id: "verde",
+        label: "Salvia serena",
+        bg: ["#F6F8F3", "#DDE6DA"],
+        ink: "#3E4A40",
+        soft: "#77877A",
+        accent: "#A2705F",
+        onAccent: "#FFFFFF",
+        card: "#FFFFFF",
+        cardLine: "rgba(90,110,95,0.24)",
+        shadow: "rgba(60,80,65,0.14)",
+        dark: false,
+      },
+    ];
+
+    const LAYOUTS = [
+      { id: "fila", label: "Los 3 en fila" },
+      { id: "destacado", label: "Uno grande + dos" },
+      { id: "lista", label: "Lista con círculos" },
+    ];
+
+    const HEADLINES = [
+      "Gana uno de estos 3 premios",
+      "Tu número puede ser el ganador",
+      "3 premios. 1.000 números. Una sola fecha.",
+      "¿Ya tienes tu número?",
+      "Apoya un sueño y llévate un premio",
+      "Todavía quedan números disponibles",
+      "Un número, tres oportunidades",
+      "Aún estás a tiempo de participar",
+    ];
+
+    const DECOS = ["burbujas", "arcos", "puntos", "banda", "limpio"];
+
+    // =========================================================================
+    // === Utilidades ===
+    // =========================================================================
+
+    function mulberry32(seed) {
+      let a = seed >>> 0;
+      return function () {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function pick(rnd, arr) {
+      return arr[Math.floor(rnd() * arr.length)];
+    }
+
+    function dayNumber(date = new Date()) {
+      return Math.floor(date.getTime() / 86400000);
+    }
+
+    function miles(n) {
+      return String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function diasRestantes() {
+      return Math.max(0, Math.ceil((DRAW_AT.getTime() - Date.now()) / 86400000));
+    }
+
+    // === Helpers de canvas ===
+
+    function rr(ctx, x, y, w, h, r) {
+      const k = Math.min(r, w / 2, h / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + k, y);
+      ctx.arcTo(x + w, y, x + w, y + h, k);
+      ctx.arcTo(x + w, y + h, x, y + h, k);
+      ctx.arcTo(x, y + h, x, y, k);
+      ctx.arcTo(x, y, x + w, y, k);
+      ctx.closePath();
+    }
+
+    function font(ctx, weight, size, family = "Inter") {
+      const stack = family === "serif" ? '"Playfair Display", Georgia, serif' : '"Inter", sans-serif';
+      ctx.font = `${weight} ${size}px ${stack}`;
+    }
+
+    function wrap(ctx, text, maxW) {
+      const words = String(text).split(/\s+/);
+      const lines = [];
+      let line = "";
+      words.forEach((word) => {
+        const test = line ? line + " " + word : word;
+        if (ctx.measureText(test).width > maxW && line) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = test;
+        }
+      });
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    /** Reduce el tamaño hasta que el texto entre en maxW y en maxLines. */
+    function fitLines(ctx, text, maxW, maxLines, size, minSize, weight, family) {
+      let s = size;
+      let lines;
+      for (;;) {
+        font(ctx, weight, s, family);
+        lines = wrap(ctx, text, maxW);
+        if (lines.length <= maxLines || s <= minSize) break;
+        s -= 2;
+      }
+      return { lines, size: s };
+    }
+
+    function drawContain(ctx, img, x, y, w, h) {
+      if (!img) return;
+      const scale = Math.min(w / img.width, h / img.height);
+      const dw = img.width * scale;
+      const dh = img.height * scale;
+      ctx.drawImage(img, x + (w - dw) / 2, y + (h - dh) / 2, dw, dh);
+    }
+
+    /** "#B76E79" + alfa -> "rgba(183,110,121,0.12)" */
+    function hexA(hex, alpha) {
+      const h = hex.replace("#", "");
+      const n = parseInt(h.length === 3 ? h.split("").map((c) => c + c).join("") : h, 16);
+      return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+    }
+
+    function withShadow(ctx, color, blur, offsetY, fn) {
+      ctx.save();
+      ctx.shadowColor = color;
+      ctx.shadowBlur = blur;
+      ctx.shadowOffsetY = offsetY;
+      fn();
+      ctx.restore();
+    }
+
+    function pill(ctx, text, cx, y, h, bg, fg, padX = 30, size = 24, weight = 700, spacing = 3) {
+      font(ctx, weight, size);
+      const letters = text.split("");
+      const textW =
+        letters.reduce((acc, ch) => acc + ctx.measureText(ch).width, 0) + spacing * (letters.length - 1);
+      const w = textW + padX * 2;
+      ctx.fillStyle = bg;
+      rr(ctx, cx - w / 2, y, w, h, h / 2);
+      ctx.fill();
+      ctx.fillStyle = fg;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      let x = cx - textW / 2;
+      letters.forEach((ch) => {
+        ctx.fillText(ch, x, y + h / 2 + 1);
+        x += ctx.measureText(ch).width + spacing;
+      });
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      return w;
+    }
+
+    // =========================================================================
+    // === Estado ===
+    // =========================================================================
+
+    const state = {
+      seed: dayNumber(),
+      themeId: "auto",
+      layoutId: "auto",
+      headlineId: "auto",
+      linkNote: "El enlace va en este mismo mensaje",
+      disponibles: null, // null = todavía sin dato
+      origen: "cargando", // cargando | firebase | manual
+    };
+
+    const images = {};
+
+    function loadImage(src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => resolve(null);
+        img.src = src;
+      });
+    }
+
+    function currentDesign() {
+      const rnd = mulberry32(state.seed * 2654435761);
+      const auto = {
+        theme: pick(rnd, THEMES),
+        layout: pick(rnd, LAYOUTS),
+        headline: pick(rnd, HEADLINES),
+        deco: pick(rnd, DECOS),
+      };
+      return {
+        theme: state.themeId === "auto" ? auto.theme : THEMES.find((t) => t.id === state.themeId),
+        layout: state.layoutId === "auto" ? auto.layout : LAYOUTS.find((l) => l.id === state.layoutId),
+        headline: state.headlineId === "auto" ? auto.headline : HEADLINES[Number(state.headlineId)],
+        deco: auto.deco,
+      };
+    }
+
+    // =========================================================================
+    // === Dibujo del banner ===
+    // =========================================================================
+
+    function drawBackground(ctx, T, deco, rnd) {
+      const g = ctx.createLinearGradient(0, 0, W * 0.35, H);
+      g.addColorStop(0, T.bg[0]);
+      g.addColorStop(1, T.bg[1]);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.save();
+      const tint = T.dark ? "255,255,255" : "0,0,0";
+
+      if (deco === "burbujas") {
+        ctx.fillStyle = T.dark ? "rgba(255,255,255,0.06)" : "rgba(255,255,255,0.55)";
+        [[140, 300, 260], [960, 900, 320], [220, 1620, 300], [900, 1450, 180]].forEach(([x, y, r]) => {
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      } else if (deco === "arcos") {
+        ctx.strokeStyle = `rgba(${tint},0.10)`;
+        ctx.lineWidth = 3;
+        for (let i = 0; i < 7; i++) {
+          ctx.beginPath();
+          ctx.arc(W + 60, 180, 220 + i * 62, Math.PI * 0.55, Math.PI * 1.45);
+          ctx.stroke();
+        }
+        for (let i = 0; i < 5; i++) {
+          ctx.beginPath();
+          ctx.arc(-40, H - 160, 200 + i * 70, Math.PI * 1.6, Math.PI * 0.45);
+          ctx.stroke();
+        }
+      } else if (deco === "puntos") {
+        ctx.fillStyle = `rgba(${tint},0.10)`;
+        for (let y = 90; y < H; y += 46) {
+          for (let x = 50; x < W; x += 46) {
+            const edge = x < 260 || x > W - 260 || y < 240 || y > H - 240;
+            if (!edge) continue;
+            ctx.beginPath();
+            ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      } else if (deco === "banda") {
+        ctx.save();
+        ctx.translate(W / 2, H * 0.46);
+        ctx.rotate(-0.14);
+        ctx.fillStyle = T.dark ? "rgba(255,255,255,0.07)" : "rgba(255,255,255,0.6)";
+        ctx.fillRect(-W, -330, W * 2, 660);
+        ctx.restore();
+      }
+      ctx.restore();
+
+      // Marco fino
+      ctx.strokeStyle = T.dark ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.85)";
+      ctx.lineWidth = 3;
+      rr(ctx, 26, 26, W - 52, H - 52, 40);
+      ctx.stroke();
+    }
+
+    function drawHeader(ctx, y, h, T) {
+      const logo = images.logo;
+      const logoH = T.dark ? 92 : 104;
+      const cy = y + 52;
+
+      // En fondos oscuros o rosados el logo se pierde: va sobre un sello claro.
+      if (T.dark) {
+        withShadow(ctx, "rgba(0,0,0,0.28)", 24, 8, () => {
+          ctx.beginPath();
+          ctx.arc(W / 2, cy, 74, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(255,252,251,0.94)";
+          ctx.fill();
+        });
+      }
+
+      if (logo) {
+        const scale = logoH / logo.height;
+        ctx.drawImage(logo, W / 2 - (logo.width * scale) / 2, cy - logoH / 2, logo.width * scale, logoH);
+      }
+      pill(ctx, "RIFA BENÉFICA · VANESSA QUIRÓS", W / 2, y + 114, 52, T.accent, T.onAccent, 34, 22, 700, 3.2);
+    }
+
+    function drawHeadline(ctx, y, h, T, D) {
+      ctx.textAlign = "center";
+      const { lines, size } = fitLines(ctx, D.headline, W - 190, 3, 74, 44, 600, "serif");
+      const lh = size * 1.16;
+      const startY = y + (h - lines.length * lh) / 2 + size * 0.82;
+      ctx.fillStyle = T.ink;
+      font(ctx, 600, size, "serif");
+      lines.forEach((l, i) => ctx.fillText(l, W / 2, startY + i * lh));
+    }
+
+    function prizeCardBase(ctx, x, y, w, h, T) {
+      withShadow(ctx, T.shadow, 30, 12, () => {
+        ctx.fillStyle = T.card;
+        rr(ctx, x, y, w, h, 30);
+        ctx.fill();
+      });
+      ctx.strokeStyle = T.cardLine;
+      ctx.lineWidth = 2;
+      rr(ctx, x, y, w, h, 30);
+      ctx.stroke();
+    }
+
+    function badge(ctx, text, x, y, T) {
+      font(ctx, 700, 19);
+      const w = ctx.measureText(text.toUpperCase()).width + 26;
+      ctx.fillStyle = T.accent;
+      rr(ctx, x, y, w, 32, 16);
+      ctx.fill();
+      ctx.fillStyle = T.onAccent;
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text.toUpperCase(), x + 13, y + 17);
+      ctx.textBaseline = "alphabetic";
+      return w;
+    }
+
+    function drawPrizes(ctx, y, h, T, D) {
+      const M = 56;
+      const inner = W - M * 2;
+
+      if (D.layout.id === "fila") {
+        const gap = 18;
+        const cw = (inner - gap * 2) / 3;
+        const nameTop = h - 104; // reserva para nombre (2 líneas) + nota
+        PRIZES.forEach((p, i) => {
+          const x = M + i * (cw + gap);
+          prizeCardBase(ctx, x, y, cw, h, T);
+          drawContain(ctx, images.prizes[i], x + 14, y + 62, cw - 28, nameTop - 74);
+          badge(ctx, p.badge, x + 18, y + 18, T);
+          ctx.textAlign = "center";
+          const { lines, size } = fitLines(ctx, p.name, cw - 28, 2, 28, 19, 700, "Inter");
+          ctx.fillStyle = T.ink;
+          font(ctx, 700, size);
+          lines.forEach((l, k) => ctx.fillText(l, x + cw / 2, y + nameTop + 24 + k * (size * 1.18)));
+          font(ctx, 500, 17);
+          ctx.fillStyle = T.soft;
+          ctx.fillText(wrap(ctx, p.note, cw - 24)[0], x + cw / 2, y + h - 22);
+        });
+        return;
+      }
+
+      if (D.layout.id === "destacado") {
+        const gap = 20;
+        const topH = Math.round((h - gap) * 0.47);
+        const botH = h - topH - gap;
+
+        // Premio principal, horizontal
+        prizeCardBase(ctx, M, y, inner, topH, T);
+        drawContain(ctx, images.prizes[0], M + 20, y + 18, 300, topH - 36);
+        const tx = M + 344;
+        badge(ctx, PRIZES[0].badge, tx, y + 40, T);
+        ctx.textAlign = "left";
+        const main = fitLines(ctx, PRIZES[0].name, inner - 380, 2, 44, 28, 600, "serif");
+        ctx.fillStyle = T.ink;
+        font(ctx, 600, main.size, "serif");
+        main.lines.forEach((l, k) => ctx.fillText(l, tx, y + 132 + k * (main.size * 1.1)));
+        font(ctx, 500, 20);
+        ctx.fillStyle = T.soft;
+        ctx.fillText(wrap(ctx, PRIZES[0].note, inner - 380)[0], tx, y + topH - 34);
+
+        // Dos premios secundarios
+        const cw = (inner - gap) / 2;
+        [1, 2].forEach((idx, i) => {
+          const x = M + i * (cw + gap);
+          const yy = y + topH + gap;
+          prizeCardBase(ctx, x, yy, cw, botH, T);
+          drawContain(ctx, images.prizes[idx], x + 16, yy + 60, cw - 32, botH - 128);
+          badge(ctx, PRIZES[idx].badge, x + 18, yy + 18, T);
+          ctx.textAlign = "center";
+          const f = fitLines(ctx, PRIZES[idx].name, cw - 30, 2, 28, 20, 700, "Inter");
+          ctx.fillStyle = T.ink;
+          font(ctx, 700, f.size);
+          f.lines.forEach((l, k) => ctx.fillText(l, x + cw / 2, yy + botH - 46 + k * (f.size * 1.18)));
+        });
+        return;
+      }
+
+      // layout "lista"
+      const gapY = 12;
+      const rowH = (h - gapY * 2) / 3;
+      PRIZES.forEach((p, i) => {
+        const yy = y + i * (rowH + gapY);
+        prizeCardBase(ctx, M, yy, inner, rowH, T);
+        const d = rowH - 28;
+        const cx = M + 22 + d / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(cx, yy + rowH / 2, d / 2, 0, Math.PI * 2);
+        ctx.fillStyle = T.dark ? "rgba(255,255,255,0.14)" : "rgba(0,0,0,0.04)";
+        ctx.fill();
+        ctx.clip();
+        // Caja cuadrada inscrita en el círculo, para que la foto no se recorte.
+        const box = d * 0.74;
+        drawContain(ctx, images.prizes[i], cx - box / 2, yy + rowH / 2 - box / 2, box, box);
+        ctx.restore();
+
+        const tx = M + 44 + d;
+        const tw = inner - d - 90;
+        badge(ctx, p.badge, tx, yy + rowH / 2 - 62, T);
+        ctx.textAlign = "left";
+        const f = fitLines(ctx, p.name, tw, 1, 36, 22, 700, "Inter");
+        ctx.fillStyle = T.ink;
+        font(ctx, 700, f.size);
+        ctx.fillText(f.lines[0], tx, yy + rowH / 2 + 8);
+        font(ctx, 500, 19);
+        ctx.fillStyle = T.soft;
+        ctx.fillText(wrap(ctx, p.note, tw)[0], tx, yy + rowH / 2 + 42);
+      });
+    }
+
+    function drawStats(ctx, y, h, T, D) {
+      const M = 56;
+      const inner = W - M * 2;
+      const gap = 16;
+      const cw = (inner - gap * 2) / 3;
+      const tileH = 138;
+
+      const disponibles = D.disponibles;
+      const vendidos = TOTAL_TICKETS - disponibles;
+      const dias = diasRestantes();
+
+      const tiles = [
+        { big: "₡" + miles(PRICE), small: "por número", size: 50, hero: true },
+        { big: String(dias), small: dias === 1 ? "día para el sorteo" : "días para el sorteo", size: 58 },
+        { big: miles(disponibles), small: "números disponibles", size: 52 },
+      ];
+
+      tiles.forEach((t, i) => {
+        const x = M + i * (cw + gap);
+        withShadow(ctx, T.shadow, 26, 10, () => {
+          ctx.fillStyle = t.hero ? T.accent : T.card;
+          rr(ctx, x, y, cw, tileH, 26);
+          ctx.fill();
+        });
+        if (!t.hero) {
+          ctx.strokeStyle = T.cardLine;
+          ctx.lineWidth = 2;
+          rr(ctx, x, y, cw, tileH, 26);
+          ctx.stroke();
+        }
+        ctx.textAlign = "center";
+        ctx.fillStyle = t.hero ? T.onAccent : T.ink;
+        font(ctx, 700, t.size, "serif");
+        ctx.fillText(t.big, x + cw / 2, y + 84);
+        ctx.fillStyle = t.hero ? T.onAccent : T.soft;
+        const s = fitLines(ctx, t.small, cw - 24, 2, 20, 15, 600, "Inter");
+        font(ctx, 600, s.size);
+        s.lines.forEach((l, k) => ctx.fillText(l, x + cw / 2, y + 112 + k * (s.size * 1.2)));
+      });
+
+      // Barra de avance
+      const barY = y + tileH + 20;
+      const pct = Math.max(0.015, Math.min(1, vendidos / TOTAL_TICKETS));
+      ctx.fillStyle = T.dark ? "rgba(255,255,255,0.18)" : "rgba(0,0,0,0.08)";
+      rr(ctx, M, barY, inner, 14, 7);
+      ctx.fill();
+      ctx.fillStyle = T.accent;
+      rr(ctx, M, barY, inner * pct, 14, 7);
+      ctx.fill();
+
+      ctx.textAlign = "center";
+      font(ctx, 600, 20);
+      ctx.fillStyle = T.soft;
+      ctx.fillText(
+        `${miles(vendidos)} de ${miles(TOTAL_TICKETS)} números ya apartados · precio único del 000 al 999`,
+        W / 2,
+        barY + 44
+      );
+    }
+
+    function drawDate(ctx, y, h, T) {
+      const M = 56;
+      const inner = W - M * 2;
+
+      // Bloque resaltado: la fecha es el dato que no se puede perder de vista.
+      withShadow(ctx, T.shadow, 26, 10, () => {
+        ctx.fillStyle = hexA(T.accent, T.dark ? 0.2 : 0.13);
+        rr(ctx, M, y, inner, h, 34);
+        ctx.fill();
+      });
+      ctx.strokeStyle = T.accent;
+      ctx.lineWidth = 3.5;
+      rr(ctx, M, y, inner, h, 34);
+      ctx.stroke();
+
+      ctx.textAlign = "center";
+      pill(ctx, "FECHA DEL SORTEO", W / 2, y + 22, 44, T.accent, T.onAccent, 30, 20, 700, 3);
+      let cy = y + 66;
+
+      // Una sola linea: se encoge hasta que quepa, para que la fecha se lea grande y de golpe.
+      const f = fitLines(ctx, DRAW_DATE_TEXT, inner - 64, 1, 62, 40, 700, "serif");
+      ctx.fillStyle = T.ink;
+      font(ctx, 700, f.size, "serif");
+      f.lines.forEach((l, i) => {
+        cy += i === 0 ? f.size * 0.94 : f.size * 1.06;
+        ctx.fillText(l, W / 2, cy);
+      });
+
+      cy += 36;
+      font(ctx, 500, 22);
+      ctx.fillStyle = T.soft;
+      ctx.fillText("Con la serie de la Lotería Nacional de la JPS", W / 2, cy);
+
+      cy += 34;
+      font(ctx, 700, 22);
+      ctx.fillStyle = T.ink;
+      ctx.fillText("Venta de números hasta las 6:00 p.m. de ese día", W / 2, cy);
+    }
+
+    function drawCTA(ctx, y, h, T, D) {
+      const M = 56;
+      const inner = W - M * 2;
+      withShadow(ctx, T.shadow, 30, 12, () => {
+        ctx.fillStyle = T.accent;
+        rr(ctx, M, y, inner, h, 30);
+        ctx.fill();
+      });
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = T.onAccent;
+      font(ctx, 700, 24);
+      ctx.fillText("COMPRA TUS NÚMEROS EN LA", W / 2, y + 48);
+      font(ctx, 700, 54, "serif");
+      ctx.fillText("PÁGINA WEB", W / 2, y + 106);
+      if (D.linkNote) {
+        font(ctx, 500, 21);
+        ctx.fillText(wrap(ctx, D.linkNote, inner - 60)[0], W / 2, y + 142);
+      }
+    }
+
+    function drawContact(ctx, y, h, T) {
+      const M = 56;
+      const inner = W - M * 2;
+      ctx.fillStyle = T.card;
+      rr(ctx, M, y, inner, h, 28);
+      ctx.fill();
+      ctx.strokeStyle = T.cardLine;
+      ctx.lineWidth = 2;
+      rr(ctx, M, y, inner, h, 28);
+      ctx.stroke();
+
+      ctx.textAlign = "center";
+      font(ctx, 700, 21);
+      ctx.fillStyle = T.soft;
+      ctx.fillText("SINPE MÓVIL Y WHATSAPP", W / 2, y + 40);
+      font(ctx, 700, 52, "serif");
+      ctx.fillStyle = T.ink;
+      ctx.fillText(PHONE, W / 2, y + 96);
+      font(ctx, 500, 20);
+      ctx.fillStyle = T.soft;
+      ctx.fillText("A nombre de Vanessa Quirós", W / 2, y + 128);
+    }
+
+    function drawPurpose(ctx, y, h, T) {
+      ctx.textAlign = "center";
+      ctx.fillStyle = T.soft;
+      ctx.font = 'italic 400 25px "Playfair Display", Georgia, serif';
+      ctx.fillText("Tu aporte impulsa mi formación como Coach Ontológica", W / 2, y + 30);
+    }
+
+    function render() {
+      const canvas = document.getElementById("preview");
+      const ctx = canvas.getContext("2d");
+      const D = currentDesign();
+      D.linkNote = state.linkNote.trim();
+      D.disponibles =
+        state.disponibles === null ? TOTAL_TICKETS : Math.max(0, Math.min(TOTAL_TICKETS, state.disponibles));
+
+      const T = D.theme;
+      const rnd = mulberry32(state.seed);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.textBaseline = "alphabetic";
+      drawBackground(ctx, T, D.deco, rnd);
+
+      const sections = [
+        { h: 172, draw: drawHeader },
+        { h: 156, draw: drawHeadline },
+        { h: 512, draw: drawPrizes },
+        { h: 202, draw: drawStats },
+        { h: 212, draw: drawDate },
+        { h: 158, draw: drawCTA },
+        { h: 144, draw: drawContact },
+        { h: 40, draw: drawPurpose },
+      ];
+
+      const PAD = 62;
+      const used = sections.reduce((a, s) => a + s.h, 0);
+      const gap = (H - PAD * 2 - used) / (sections.length - 1);
+
+      let y = PAD;
+      sections.forEach((s) => {
+        s.draw(ctx, y, s.h, T, D);
+        y += s.h + gap;
+      });
+
+      document.getElementById("design-label").textContent =
+        `Diseño de hoy: ${T.label} · ${D.layout.label}`;
+      updateWhatsAppText(D);
+    }
+
+    // =========================================================================
+    // === Texto para WhatsApp ===
+    // =========================================================================
+
+    function updateWhatsAppText(D) {
+      const dias = diasRestantes();
+      const disp = D.disponibles;
+      const txt = [
+        "🎁 *RIFA BENÉFICA · Vanessa Quirós*",
+        "",
+        "Participa por:",
+        "1️⃣ Echo Dot con Alexa",
+        "2️⃣ Bolso VERSSE (nuevo, con etiqueta)",
+        "3️⃣ Plancha de vapor WINNING STAR",
+        "",
+        `💵 *₡1.000 por número* (precio único)`,
+        `🔢 Quedan *${miles(disp)}* de 1.000 números`,
+        `📅 Sorteo: ${DRAW_DATE_TEXT.toLowerCase()}, con la serie de la Lotería Nacional (JPS)`,
+        `⏳ ${dias === 1 ? "¡Falta 1 día!" : `Faltan ${dias} días`} · venta hasta las 6:00 p.m. de ese día`,
+        `📲 SINPE Móvil y WhatsApp: ${PHONE} (Vanessa Quirós)`,
+        "",
+        "👉 Elige tus números aquí:",
+        SITE_URL,
+        "",
+        "Tu aporte impulsa mi formación como Coach Ontológica 💗",
+      ].join("\n");
+      document.getElementById("wa-text").value = txt;
+    }
+
+    // =========================================================================
+    // === Datos en vivo (Firestore) ===
+    // =========================================================================
+
+    function setStats() {
+      const disp = state.disponibles === null ? TOTAL_TICKETS : state.disponibles;
+      document.getElementById("stat-dias").textContent = diasRestantes();
+      document.getElementById("stat-disp").textContent = miles(disp);
+      document.getElementById("stat-vend").textContent = miles(TOTAL_TICKETS - disp);
+    }
+
+    async function loadTickets() {
+      const status = document.getElementById("data-status");
+      status.textContent = "Conectando con la base de datos…";
+      document.getElementById("manual-box").classList.add("hidden");
+
+      try {
+        const [{ initializeApp }, fs, cfgMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js"),
+          import("../js/web-rifa/firebase-config.js"),
+        ]);
+
+        const app = initializeApp(cfgMod.firebaseConfig);
+        const db = fs.getFirestore(app);
+        const snap = await fs.getDocs(fs.collection(db, "tickets"));
+
+        if (snap.empty) throw new Error("La colección tickets está vacía.");
+
+        let disponibles = 0;
+        snap.forEach((d) => {
+          if (d.data().status === "disponible") disponibles += 1;
+        });
+
+        state.disponibles = disponibles;
+        state.origen = "firebase";
+        status.textContent = `Datos en vivo · ${snap.size} boletos leídos · ${new Date().toLocaleTimeString("es-CR")}`;
+      } catch (err) {
+        console.warn("[banner] No se pudo leer Firestore:", err);
+        state.origen = "manual";
+        if (state.disponibles === null) state.disponibles = TOTAL_TICKETS;
+        status.textContent =
+          "No se pudo leer la base de datos. Puedes escribir el dato a mano y el banner se genera igual.";
+        const box = document.getElementById("manual-box");
+        box.classList.remove("hidden");
+        document.getElementById("manual-disp").value = state.disponibles;
+      }
+
+      setStats();
+      render();
+    }
+
+    // =========================================================================
+    // === UI ===
+    // =========================================================================
+
+    function fillSelects() {
+      const selTheme = document.getElementById("sel-theme");
+      selTheme.innerHTML =
+        '<option value="auto">Automático (cambia cada día)</option>' +
+        THEMES.map((t) => `<option value="${t.id}">${t.label}</option>`).join("");
+
+      const selLayout = document.getElementById("sel-layout");
+      selLayout.innerHTML =
+        '<option value="auto">Automático (cambia cada día)</option>' +
+        LAYOUTS.map((l) => `<option value="${l.id}">${l.label}</option>`).join("");
+
+      const selHead = document.getElementById("sel-headline");
+      selHead.innerHTML =
+        '<option value="auto">Automático (cambia cada día)</option>' +
+        HEADLINES.map((h, i) => `<option value="${i}">${h}</option>`).join("");
+    }
+
+    function initUI() {
+      fillSelects();
+
+      document.getElementById("sel-theme").addEventListener("change", (e) => {
+        state.themeId = e.target.value;
+        render();
+      });
+      document.getElementById("sel-layout").addEventListener("change", (e) => {
+        state.layoutId = e.target.value;
+        render();
+      });
+      document.getElementById("sel-headline").addEventListener("change", (e) => {
+        state.headlineId = e.target.value;
+        render();
+      });
+      document.getElementById("inp-linknote").addEventListener("input", (e) => {
+        state.linkNote = e.target.value;
+        render();
+      });
+      document.getElementById("manual-disp").addEventListener("input", (e) => {
+        state.disponibles = Math.max(0, Math.min(TOTAL_TICKETS, Number(e.target.value) || 0));
+        setStats();
+        render();
+      });
+
+      document.getElementById("btn-shuffle").addEventListener("click", () => {
+        state.seed = (state.seed + 1 + Math.floor(Math.random() * 97)) >>> 0;
+        render();
+      });
+
+      document.getElementById("btn-refresh").addEventListener("click", loadTickets);
+
+      document.getElementById("btn-download").addEventListener("click", async () => {
+        const blob = await canvasBlob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileName();
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+      });
+
+      const btnShare = document.getElementById("btn-share");
+      if (navigator.canShare && navigator.canShare({ files: [new File([""], "x.png", { type: "image/png" })] })) {
+        btnShare.classList.remove("hidden");
+        btnShare.addEventListener("click", async () => {
+          const blob = await canvasBlob();
+          const file = new File([blob], fileName(), { type: "image/png" });
+          try {
+            await navigator.share({ files: [file], title: "Rifa benéfica · Vanessa Quirós" });
+          } catch (_) {
+            /* el usuario canceló */
+          }
+        });
+      }
+
+      document.getElementById("btn-copy").addEventListener("click", async () => {
+        const area = document.getElementById("wa-text");
+        const btn = document.getElementById("btn-copy");
+        try {
+          await navigator.clipboard.writeText(area.value);
+        } catch (_) {
+          area.removeAttribute("readonly");
+          area.select();
+          document.execCommand("copy");
+          area.setAttribute("readonly", "");
+        }
+        btn.textContent = "¡Copiado!";
+        setTimeout(() => (btn.textContent = "Copiar"), 1800);
+      });
+    }
+
+    function fileName() {
+      const d = new Date();
+      const stamp = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      return `rifa-vanessa-quiros-${stamp}.png`;
+    }
+
+    function canvasBlob() {
+      return new Promise((resolve) => {
+        document.getElementById("preview").toBlob(resolve, "image/png");
+      });
+    }
+
+    // =========================================================================
+    // === Boot ===
+    // =========================================================================
+
+    initUI();
+    setStats();
+
+    const [logo, ...prizeImgs] = await Promise.all([
+      loadImage("banner-assets/logo-vq.webp"),
+      ...PRIZES.map((p) => loadImage(p.src)),
+    ]);
+    images.logo = logo;
+    images.prizes = prizeImgs;
+
+    try {
+      await document.fonts.load('600 74px "Playfair Display"');
+      await document.fonts.load('700 52px "Playfair Display"');
+      await document.fonts.load('700 24px "Inter"');
+      await document.fonts.ready;
+    } catch (_) {
+      /* seguimos con las fuentes de sistema */
+    }
+
+    render();
+    loadTickets();
+  </script>
+</body>
+</html>
