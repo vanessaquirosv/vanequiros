@@ -3,13 +3,14 @@
 // ═══════════════════════════════════════════════════════════════
 import { fmtCRC, driveImageUrl } from './tc-config.js';
 import { discountedPrice } from './pricing.js';
-import { addToCart } from './cart-state.js';
 import { api, getSession } from './api.js';
 
 const modalRoot = () => document.getElementById('modalRoot');
 const toastRoot = () => document.getElementById('toastRoot');
 
 // ── Modal genérico ──────────────────────────────────────────────
+// En el celular los modales salen como hoja desde abajo (más fáciles
+// de alcanzar con el pulgar); ver .tc-modal en tc.css.
 export function openModal(contentHtml, { wide = false } = {}) {
   const overlay = document.createElement('div');
   overlay.className = 'tc-modal-overlay';
@@ -21,11 +22,15 @@ export function openModal(contentHtml, { wide = false } = {}) {
       </button>
       <div class="clear-both px-6 pb-6 pt-2 sm:px-8 sm:pb-8">${contentHtml}</div>
     </div>`;
-  const close = () => { overlay.remove(); document.body.style.overflow = ''; };
+  const close = () => {
+    overlay.remove();
+    document.removeEventListener('keydown', escHandler);
+    if (!modalRoot().children.length) document.body.style.overflow = '';
+  };
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay || e.target.closest('[data-close]')) close();
   });
-  const escHandler = (e) => { if (e.key === 'Escape') { close(); document.removeEventListener('keydown', escHandler); } };
+  function escHandler(e) { if (e.key === 'Escape') close(); }
   document.addEventListener('keydown', escHandler);
   document.body.style.overflow = 'hidden';
   modalRoot().appendChild(overlay);
@@ -88,106 +93,13 @@ export function imgOrPlaceholder(src, cls, alt = '') {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// Modal de detalle de producto
+// Reseñas de un producto (las usa la página de producto)
+// root debe contener #pmRating, #pmReviewsList y #pmReviewForm.
 // ═══════════════════════════════════════════════════════════════
-export async function openProductModal(prod) {
-  const colors = prod.colors || [];
-  let selectedColor = colors[0]?.name || '';
-
-  const specsHtml = (prod.specs || []).length
-    ? `<ul class="mt-3 space-y-1.5">
-        ${prod.specs.map(s => `<li class="flex items-start gap-2 text-sm text-neutral-300">
-          <span class="mt-0.5 text-fuchsia-400">▸</span><span>${escapeHtml(s)}</span></li>`).join('')}
-      </ul>`
-    : '';
-
-  const { overlay, close } = openModal(`
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-      <div>
-        <div id="pmImgWrap" class="rounded-xl overflow-hidden border border-violet-500/15">
-          ${imgOrPlaceholder(productImg(prod, selectedColor), 'w-full', prod.name)}
-        </div>
-        ${prod.discountPct > 0 ? `<div class="mt-3 inline-block tc-badge-promo !static">-${prod.discountPct}% de descuento</div>` : ''}
-      </div>
-      <div>
-        <p class="text-xs uppercase tracking-wider text-violet-400/80">${escapeHtml(prod.brand || '')} · ${escapeHtml(prod.category || '')}${prod.subcategory ? ' / ' + escapeHtml(prod.subcategory) : ''}</p>
-        <h2 class="mt-1 font-serif text-2xl font-semibold text-white">${escapeHtml(prod.name)}</h2>
-        <div class="mt-2 flex items-center gap-2" id="pmRating"></div>
-        <div class="mt-3">${priceHtml(prod, { size: 'text-2xl' })}</div>
-        <p class="mt-4 text-sm text-neutral-300 leading-relaxed">${escapeHtml(prod.desc || '')}</p>
-
-        ${colors.length ? `
-          <div class="mt-5">
-            <p class="tc-label">Color: <span id="pmColorName" class="text-white font-semibold">${escapeHtml(selectedColor)}</span></p>
-            <div class="flex items-center gap-2.5 mt-1" id="pmColors">
-              ${colors.map(c => `<button type="button" class="tc-color-dot ${c.name === selectedColor ? 'selected' : ''}"
-                title="${escapeHtml(c.name)}" data-color="${escapeHtml(c.name)}" style="background:${c.hex || '#666'}"></button>`).join('')}
-            </div>
-          </div>` : ''}
-
-        <div class="mt-6 flex items-center gap-3">
-          <div class="tc-qty">
-            <button type="button" data-qty="-1" aria-label="Menos">−</button>
-            <input id="pmQty" type="number" min="1" max="99" value="1">
-            <button type="button" data-qty="1" aria-label="Más">+</button>
-          </div>
-          <button type="button" id="pmAdd" class="tc-btn-primary flex-1">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13 5.4 5M7 13l-2 5h14M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>
-            Agregar al carrito
-          </button>
-        </div>
-
-        ${specsHtml ? `
-          <div class="mt-6">
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-violet-300/90">Especificaciones</h3>
-            ${specsHtml}
-          </div>` : ''}
-        <p class="mt-5 text-[11px] text-neutral-600">Código de producto: <span class="font-mono">${prod.code}</span></p>
-      </div>
-    </div>
-
-    <div class="tc-divider my-6"></div>
-    <div id="pmReviews">
-      <h3 class="text-sm font-semibold uppercase tracking-wider text-violet-300/90">Reseñas</h3>
-      <div id="pmReviewsList" class="mt-3"><span class="tc-spinner"></span></div>
-      <div id="pmReviewForm" class="mt-4"></div>
-    </div>
-  `, { wide: true });
-
-  const $ = (sel) => overlay.querySelector(sel);
-
-  // Colores
-  $('#pmColors')?.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-color]');
-    if (!btn) return;
-    selectedColor = btn.dataset.color;
-    overlay.querySelectorAll('#pmColors .tc-color-dot').forEach(d => d.classList.toggle('selected', d === btn));
-    $('#pmColorName').textContent = selectedColor;
-    $('#pmImgWrap').innerHTML = imgOrPlaceholder(productImg(prod, selectedColor), 'w-full', prod.name);
-  });
-
-  // Cantidad
-  overlay.querySelectorAll('[data-qty]').forEach(b => b.addEventListener('click', () => {
-    const input = $('#pmQty');
-    input.value = Math.max(1, Math.min(99, (parseInt(input.value) || 1) + Number(b.dataset.qty)));
-  }));
-
-  // Agregar al carrito
-  $('#pmAdd').addEventListener('click', () => {
-    const qty = Math.max(1, Math.min(99, parseInt($('#pmQty').value) || 1));
-    addToCart(prod.code, qty, selectedColor);
-    toast(`${prod.name} agregado al carrito`, 'success');
-    close();
-  });
-
-  // Reseñas
-  loadReviews(prod, overlay);
-}
-
-async function loadReviews(prod, overlay) {
-  const list = overlay.querySelector('#pmReviewsList');
-  const formWrap = overlay.querySelector('#pmReviewForm');
-  const ratingWrap = overlay.querySelector('#pmRating');
+export async function loadReviews(prod, root) {
+  const list = root.querySelector('#pmReviewsList');
+  const formWrap = root.querySelector('#pmReviewForm');
+  const ratingWrap = root.querySelector('#pmRating');
 
   let reviews = [];
   try {
@@ -251,7 +163,7 @@ async function loadReviews(prod, overlay) {
     try {
       await api('addReview', { productCode: prod.code, stars: myStars, text: formWrap.querySelector('#rvText').value });
       toast('¡Gracias por tu reseña!', 'success');
-      loadReviews(prod, overlay);
+      loadReviews(prod, root);
     } catch (err) {
       toast(err.message, 'error');
       btn.disabled = false;

@@ -8,7 +8,8 @@ import { getCart, setQty, removeFromCart, clearCart } from '../cart-state.js';
 import { api, getSession } from '../api.js';
 import { fmtCRC, TC_CONFIG } from '../tc-config.js';
 import { discountedPrice } from '../pricing.js';
-import { toast, openModal, openProductModal, productImg, imgOrPlaceholder, escapeHtml } from '../modals.js';
+import { toast, openModal, productImg, imgOrPlaceholder, escapeHtml } from '../modals.js';
+import { productHref } from '../route.js';
 
 export async function renderCart(view) {
   await loadCatalog();
@@ -31,17 +32,31 @@ function drawCart(view) {
     return;
   }
 
-  const rows = items.map(it => {
+  // productos guardados que se agotaron o se retiraron desde que se agregaron
+  const missing = items.filter(it => !getProduct(it.code));
+  const missingHtml = missing.length ? `
+    <div class="tc-panel p-4 border-amber-400/30" data-missing>
+      <p class="text-sm font-semibold text-amber-300">
+        ${missing.length === 1 ? 'Un producto de tu carrito ya no está disponible' : `${missing.length} productos de tu carrito ya no están disponibles`}
+      </p>
+      <p class="text-xs text-neutral-400 mt-1">Se agotaron o se retiraron de la tienda, así que no se incluyen en la orden.</p>
+      <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        ${missing.map(it => `<a href="${productHref(it.code)}" class="text-xs text-violet-300 hover:text-fuchsia-300 underline underline-offset-2">Ver estado de ${escapeHtml(it.code)}</a>`).join('')}
+      </div>
+      <button type="button" data-drop-missing class="tc-btn-ghost !px-0 mt-2 text-xs">Quitarlos del carrito</button>
+    </div>` : '';
+
+  const rows = missingHtml + items.map(it => {
     const prod = getProduct(it.code);
     if (!prod) return '';
     const unit = discountedPrice(prod.price, prod.discountPct);
     return `
       <div class="tc-panel p-3.5 flex gap-3.5 items-center" data-row data-code="${prod.code}" data-color="${escapeHtml(it.color)}">
-        <button type="button" data-open class="w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-violet-500/15">
+        <a href="${productHref(prod.code)}" class="w-20 h-20 shrink-0 rounded-lg overflow-hidden border border-violet-500/15">
           ${imgOrPlaceholder(productImg(prod, it.color), 'w-full h-full !aspect-auto object-cover', prod.name)}
-        </button>
+        </a>
         <div class="flex-1 min-w-0">
-          <button type="button" data-open class="text-left text-sm font-semibold text-neutral-100 hover:text-fuchsia-300 transition-colors leading-snug line-clamp-2">${escapeHtml(prod.name)}</button>
+          <a href="${productHref(prod.code)}" class="text-sm font-semibold text-neutral-100 hover:text-fuchsia-300 transition-colors leading-snug line-clamp-2">${escapeHtml(prod.name)}</a>
           <p class="text-xs text-neutral-500 mt-0.5">
             ${escapeHtml(prod.brand || '')}${it.color ? ` · Color: <span class="text-neutral-300">${escapeHtml(it.color)}</span>` : ''}
           </p>
@@ -73,7 +88,7 @@ function drawCart(view) {
       <div class="grid grid-cols-1 lg:grid-cols-[1fr_22rem] gap-6 items-start">
         <div class="space-y-3" id="cartRows">${rows}</div>
 
-        <aside class="tc-panel p-5 lg:sticky lg:top-20">
+        <aside class="tc-panel p-5 lg:sticky lg:top-[calc(var(--tc-header-h,4rem)+1rem)]">
           <h2 class="text-sm font-semibold uppercase tracking-wider text-violet-300/90">Resumen</h2>
 
           <div class="mt-4 space-y-2 text-sm">
@@ -153,6 +168,11 @@ function drawCart(view) {
 
   // ── Interacción de filas ──
   view.querySelector('#cartRows').addEventListener('click', (e) => {
+    if (e.target.closest('[data-drop-missing]')) {
+      missing.forEach(it => removeFromCart(it.code, it.color));
+      drawCart(view);
+      return;
+    }
     const row = e.target.closest('[data-row]');
     if (!row) return;
     const { code, color } = row.dataset;
@@ -162,7 +182,6 @@ function drawCart(view) {
     if (e.target.closest('[data-inc]')) { setQty(code, color, it.qty + 1); drawCart(view); }
     else if (e.target.closest('[data-dec]')) { setQty(code, color, it.qty - 1); drawCart(view); }
     else if (e.target.closest('[data-remove]')) { removeFromCart(code, color); drawCart(view); }
-    else if (e.target.closest('[data-open]')) { const p = getProduct(code); if (p) openProductModal(p); }
   });
   view.querySelector('#cartRows').addEventListener('change', (e) => {
     const input = e.target.closest('[data-qty-input]');

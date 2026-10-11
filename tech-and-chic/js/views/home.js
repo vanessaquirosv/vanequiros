@@ -3,17 +3,19 @@
 // Guía de compra + artículos Hot + promociones (configurables
 // desde el programa de administración vía catálogo publicado).
 // ═══════════════════════════════════════════════════════════════
-import { loadCatalog } from '../catalog.js';
+import { loadCatalog, catalogCategories, deptIcon } from '../catalog.js';
 import { productCard } from '../product-card.js';
 import { discountedPrice } from '../pricing.js';
 import { fmtCRC } from '../tc-config.js';
 import { escapeHtml } from '../modals.js';
+import { storeHref } from '../route.js';
+import { syncInstallButtons } from '../pwa.js';
 
 const STEPS = [
   {
     icon: `<svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>`,
     title: '1 · Explora',
-    text: 'Navega la Tienda, usa los filtros o el buscador y descubre lo que te encanta.',
+    text: 'Recorre los departamentos o usa el buscador y descubre lo que te encanta.',
   },
   {
     icon: `<svg class="h-7 w-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13 5.4 5M7 13l-2 5h14M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>`,
@@ -36,7 +38,7 @@ export async function renderHome(view) {
   view.innerHTML = `
     <div class="tc-fade-in">
       <!-- Hero -->
-      <section class="text-center pt-4 pb-10">
+      <section class="text-center pt-2 pb-8 sm:pt-4 sm:pb-10">
         <h1 class="font-serif text-4xl sm:text-5xl font-semibold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent tc-hero-title">
           Tech &amp; Chic
         </h1>
@@ -49,6 +51,30 @@ export async function renderHome(view) {
           <a href="#/tienda" class="tc-btn-primary">Ir a la Tienda</a>
           <a href="#/compras" class="tc-btn-secondary">Rastrear mi compra</a>
         </div>
+      </section>
+
+      <!-- Instalar como app (solo aparece si el teléfono lo permite) -->
+      <section data-install class="hidden mb-6">
+        <button type="button" class="tc-install-card w-full text-left">
+          <img src="icons/icon-192.png" alt="" class="h-12 w-12 rounded-xl shrink-0" width="48" height="48">
+          <span class="flex-1 min-w-0">
+            <span class="block text-sm font-semibold text-white">Instala Tech &amp; Chic en tu teléfono</span>
+            <span class="block text-xs text-neutral-400 mt-0.5">Ábrela como una app, directo desde tu pantalla de inicio.</span>
+          </span>
+          <span class="tc-btn-primary !px-4 !py-2 !text-xs shrink-0">Instalar</span>
+        </button>
+      </section>
+
+      <!-- Departamentos -->
+      <section id="homeDepts" class="py-4 hidden">
+        <div class="flex items-end justify-between gap-4">
+          <div>
+            <h2 class="tc-section-title">Departamentos</h2>
+            <div class="tc-title-rule mt-2"></div>
+          </div>
+          <a href="#/tienda" class="tc-btn-ghost shrink-0">Ver todo →</a>
+        </div>
+        <div id="homeDeptsGrid" class="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div>
       </section>
 
       <!-- Cómo comprar -->
@@ -103,8 +129,23 @@ export async function renderHome(view) {
       </section>
     </div>`;
 
+  syncInstallButtons(view);
+
   const cat = await loadCatalog();
   if (!view.isConnected) return;
+
+  // Departamentos
+  const depts = catalogCategories(cat);
+  if (depts.length) {
+    view.querySelector('#homeDepts').classList.remove('hidden');
+    const count = (name) => cat.products.filter(p => !p.combo && p.category === name).length;
+    view.querySelector('#homeDeptsGrid').innerHTML = depts.map(d => `
+      <a href="${storeHref({ dep: d.name })}" class="tc-dept-tile">
+        <span class="text-3xl" aria-hidden="true">${deptIcon(d.name)}</span>
+        <span class="mt-2 text-sm font-semibold text-neutral-100 leading-tight">${escapeHtml(d.name)}</span>
+        <span class="mt-0.5 text-[11px] text-neutral-500">${count(d.name)} productos</span>
+      </a>`).join('');
+  }
 
   const byCode = (code) => cat.products.find(p => p.code === code);
   const home = cat.home || {};

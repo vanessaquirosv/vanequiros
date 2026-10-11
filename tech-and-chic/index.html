@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Tech &amp; Chic">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Tech &amp; Chic — Tienda</title>
   <meta name="description" content="Tech & Chic — Innovación con estilo. Tecnología, accesorios y más. Ordena por WhatsApp o Instagram.">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -43,75 +49,53 @@
 <body class="min-h-screen bg-neutral-950 font-sans text-neutral-100 antialiased flex flex-col">
 
   <!-- ══════════════ HEADER (persistente, nunca se recarga) ══════════════ -->
-  <header class="sticky top-0 z-40 border-b border-violet-500/15 bg-neutral-950/85 backdrop-blur-md">
+  <header class="tc-header sticky top-0 z-40 border-b border-violet-500/15 bg-neutral-950/90 backdrop-blur-md">
     <div class="mx-auto max-w-7xl px-4 sm:px-6">
-      <div class="flex h-16 items-center justify-between gap-3">
+      <div class="flex h-14 md:h-16 items-center gap-3">
 
         <!-- Logo -->
         <a href="#/inicio" class="tc-logo-link flex items-center gap-3 shrink-0" aria-label="Tech & Chic — Inicio">
           <img src="../img/T%26C%20Logo_WebReTouch.png" alt="Tech & Chic" width="44" height="44"
-               class="tc-header-logo h-11 w-11 object-contain" decoding="async">
-          <span class="hidden sm:block font-serif text-lg font-semibold leading-tight bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent whitespace-nowrap">
+               class="tc-header-logo h-10 w-10 md:h-11 md:w-11 object-contain" decoding="async">
+          <span class="hidden lg:block font-serif text-lg font-semibold leading-tight bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent whitespace-nowrap">
             Tech &amp; Chic
           </span>
         </a>
 
-        <!-- Navegación desktop -->
+        <!-- Navegación de escritorio -->
         <nav class="hidden md:flex items-center gap-1" aria-label="Principal">
           <a href="#/inicio"  data-nav="inicio"  class="tc-nav-link">Inicio</a>
           <a href="#/tienda"  data-nav="tienda"  class="tc-nav-link">Tienda</a>
           <a href="#/carrito" data-nav="carrito" class="tc-nav-link relative">
             Carrito
-            <span id="cartBadge" class="tc-cart-badge hidden">0</span>
+            <span data-cart-badge class="tc-cart-badge hidden">0</span>
           </a>
           <a href="#/compras" data-nav="compras" class="tc-nav-link">Compras</a>
         </nav>
 
-        <!-- Área de sesión + buscador (siempre visible) -->
-        <div class="flex min-w-0 items-center gap-2">
-          <div id="authArea" class="flex items-center gap-2 shrink-0"></div>
+        <!-- Buscador: siempre a la vista, en cualquier pantalla -->
+        <form class="tc-hdr-search relative flex-1 min-w-0 md:max-w-sm md:ml-auto" role="search">
+          <input data-hdr-search type="search" autocomplete="off" enterkeyhint="search"
+                 class="tc-input tc-search-input w-full" placeholder="Buscar productos…"
+                 aria-label="Buscar productos en la tienda">
+          <button type="submit" class="tc-search-go" aria-label="Buscar">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+          </button>
+        </form>
 
-          <form class="tc-hdr-search hidden lg:block relative shrink" role="search">
-            <input data-hdr-search type="search" autocomplete="off"
-                   class="tc-input tc-search-input w-52 lg:w-64" placeholder="Buscar productos…"
-                   aria-label="Buscar productos en la tienda">
-            <button type="submit" class="tc-search-go" aria-label="Buscar">
-              <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-            </button>
-          </form>
-        </div>
-
-        <!-- Botón menú móvil -->
-        <button id="mobileMenuBtn" type="button" aria-label="Abrir menú" aria-expanded="false"
-                class="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-neutral-300 hover:bg-violet-500/10 hover:text-fuchsia-300 transition-colors">
-          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path stroke-linecap="round" d="M4 7h16M4 12h16M4 17h16"/>
-          </svg>
-        </button>
+        <!-- Sesión (escritorio; en el celular vive en la barra inferior) -->
+        <div id="authArea" class="hidden md:flex items-center gap-2 shrink-0"></div>
       </div>
-
-      <!-- Buscador en pantallas menores: fuera del menú, siempre a la vista -->
-      <form class="tc-hdr-search lg:hidden relative pb-3" role="search">
-        <input data-hdr-search type="search" autocomplete="off"
-               class="tc-input tc-search-input w-full" placeholder="Buscar productos…"
-               aria-label="Buscar productos en la tienda">
-        <button type="submit" class="tc-search-go" aria-label="Buscar">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="m21 21-4.34-4.34M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-        </button>
-      </form>
-
-      <!-- Navegación móvil -->
-      <nav id="mobileMenu" class="md:hidden hidden pb-3 flex flex-col gap-1" aria-label="Principal móvil">
-        <a href="#/inicio"  data-nav="inicio"  class="tc-nav-link">Inicio</a>
-        <a href="#/tienda"  data-nav="tienda"  class="tc-nav-link">Tienda</a>
-        <a href="#/carrito" data-nav="carrito" class="tc-nav-link relative">Carrito <span id="cartBadgeMobile" class="tc-cart-badge-inline hidden">0</span></a>
-        <a href="#/compras" data-nav="compras" class="tc-nav-link">Compras</a>
-      </nav>
     </div>
+
+    <!-- Departamentos: la forma principal de recorrer la tienda -->
+    <nav id="deptBar" class="tc-deptbar" aria-label="Departamentos">
+      <div class="tc-deptbar-track mx-auto max-w-7xl px-4 sm:px-6" data-dept-track></div>
+    </nav>
   </header>
 
   <!-- ══════════════ VISTA (solo esto cambia al navegar) ══════════════ -->
-  <main id="view" class="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 py-8">
+  <main id="view" class="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 py-5 md:py-8">
     <!-- contenido inyectado por js/app.js -->
   </main>
 
@@ -161,6 +145,7 @@
             <li><a href="#/compras" class="tc-footer-link">Estado de mi compra</a></li>
             <li><a href="#/carrito" class="tc-footer-link">Mi carrito</a></li>
             <li><button type="button" id="footerTerms" class="tc-footer-link">Términos y condiciones</button></li>
+            <li><button type="button" data-install class="tc-footer-link hidden">Instalar la app</button></li>
             <li><a href="../index.html" class="tc-footer-link">Portal principal</a></li>
           </ul>
         </div>
@@ -175,7 +160,36 @@
 
   <!-- Modales y toasts -->
   <div id="modalRoot"></div>
-  <div id="toastRoot" class="fixed bottom-5 right-5 z-[70] flex flex-col gap-2 items-end"></div>
+  <div id="toastRoot" class="tc-toast-root"></div>
+
+  <!-- ══════════════ BARRA INFERIOR (celular, estilo app) ══════════════ -->
+  <nav class="tc-tabbar md:hidden" aria-label="Principal móvil">
+    <a href="#/inicio" data-nav="inicio" class="tc-tab">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m3 10.5 9-7 9 7V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9.5Z"/></svg>
+      <span>Inicio</span>
+    </a>
+    <a href="#/tienda" data-nav="tienda" class="tc-tab">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z"/></svg>
+      <span>Tienda</span>
+    </a>
+    <a href="#/carrito" data-nav="carrito" class="tc-tab">
+      <span class="relative">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13 5.4 5M7 13l-2 5h14M9 21a1 1 0 1 0 0-2 1 1 0 0 0 0 2Zm8 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg>
+        <span data-cart-badge class="tc-cart-badge hidden">0</span>
+      </span>
+      <span>Carrito</span>
+    </a>
+    <a href="#/compras" data-nav="compras" class="tc-tab">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7.5v9l-8 4.5-8-4.5v-9L12 3l8 4.5ZM12 12l8-4.5M12 12v9m0-9L4 7.5"/></svg>
+      <span>Compras</span>
+    </a>
+    <button type="button" id="tabAccount" class="tc-tab">
+      <span data-account-icon>
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.1a7.5 7.5 0 0 1 15 0A17 17 0 0 1 12 21.75c-2.68 0-5.22-.58-7.5-1.65Z"/></svg>
+      </span>
+      <span>Cuenta</span>
+    </button>
+  </nav>
 
   <script type="module" src="js/app.js"></script>
 </body>

@@ -20,7 +20,8 @@ export function loadCatalog() {
 export function getCatalog() { return _catalog; }
 
 export function getProduct(code) {
-  return _catalog?.products.find(p => p.code === code) || null;
+  const c = String(code || '').toUpperCase();
+  return _catalog?.products.find(p => p.code === c) || null;
 }
 
 async function doLoad() {
@@ -101,4 +102,23 @@ export function catalogCategories(cat) {
 export function catalogBrands(cat) {
   return [...new Set(cat.products.filter(p => !p.combo).map(p => p.brand).filter(Boolean))]
     .sort((a, b) => a.localeCompare(b, 'es'));
+}
+
+/** Producto agotado que el admin publicó como referencia (sin precio). */
+export function unavailableProduct(cat, code) {
+  const c = String(code || '').toUpperCase();
+  return (cat.unavailable || []).find(p => String(p.code).toUpperCase() === c) || null;
+}
+
+// Ícono de cada departamento (por nombre normalizado; los nuevos usan el genérico).
+const DEPT_ICONS = [
+  [/hogar/, '🏠'], [/electr/, '🔌'], [/tecnolog/, '📱'], [/inform|comput/, '💻'], [/oficina/, '🗂️'],
+  [/videojuego|gamer|gaming/, '🎮'], [/juguete/, '🧸'], [/belleza|cuidado/, '💄'],
+  [/moda|accesorio/, '👜'], [/deporte|aire libre/, '🏃'], [/carro|moto|auto/, '🚗'],
+  [/mascota/, '🐾'], [/beb/, '🍼'], [/cocina/, '🍳'], [/audio|sonido/, '🎧'],
+];
+
+export function deptIcon(name) {
+  const n = String(name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  return DEPT_ICONS.find(([re]) => re.test(n))?.[1] || '🛍️';
 }

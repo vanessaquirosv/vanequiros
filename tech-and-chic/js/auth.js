@@ -6,6 +6,7 @@ import { api, getSession, clearSession } from './api.js';
 import { openModal, toast, escapeHtml } from './modals.js';
 import { getCart, mergeCart } from './cart-state.js';
 import { driveImageUrl } from './tc-config.js';
+import { syncInstallButtons } from './pwa.js';
 
 // ── Render del área de sesión en el header ──────────────────────
 export function initAuth() {
@@ -37,6 +38,7 @@ function avatarHtml(user, sizeCls = '') {
 }
 
 function renderAuthArea() {
+  renderAccountTab();
   const area = document.getElementById('authArea');
   if (!area) return;
   const session = getSession();
@@ -99,6 +101,67 @@ function renderAuthArea() {
     if (item.dataset.menu === 'perfil') openEditProfileModal();
     else if (item.dataset.menu === 'historial') { location.hash = '#/compras'; }
     else if (item.dataset.menu === 'logout') doLogout();
+  });
+}
+
+// ── Pestaña "Cuenta" de la barra inferior (celular) ─────────────
+function renderAccountTab() {
+  const icon = document.querySelector('[data-account-icon]');
+  const user = getSession()?.user;
+  if (!icon) return;
+  if (!icon.dataset.guest) icon.dataset.guest = icon.innerHTML;
+  icon.innerHTML = user ? avatarHtml(user, 'tc-avatar-xs') : icon.dataset.guest;
+}
+
+/** Hoja de cuenta en el celular: entrar/registrarse o el menú del usuario. */
+export function openAccountSheet() {
+  const user = getSession()?.user;
+  if (!user) {
+    const { overlay, close } = openModal(`
+      <div class="pt-2 text-center">
+        <h2 class="font-serif text-2xl font-semibold text-white">Tu cuenta</h2>
+        <p class="mt-2 text-sm text-neutral-400">Es opcional: puedes comprar sin cuenta. Con ella guardas tu carrito, tu historial y puedes dejar reseñas.</p>
+        <div class="mt-6 flex flex-col gap-3">
+          <button type="button" data-go="login" class="tc-btn-primary w-full">Iniciar sesión</button>
+          <button type="button" data-go="register" class="tc-btn-secondary w-full">Crear cuenta</button>
+          <button type="button" data-install class="tc-btn-ghost justify-center hidden">📲 Instalar la app</button>
+        </div>
+      </div>`);
+    syncInstallButtons(overlay);
+    overlay.addEventListener('click', (e) => {
+      const go = e.target.closest('[data-go]')?.dataset.go;
+      if (!go) return;
+      close();
+      if (go === 'login') openLoginModal(); else openRegisterModal();
+    });
+    return;
+  }
+
+  const { overlay, close } = openModal(`
+    <div class="pt-2">
+      <div class="flex items-center gap-3">
+        ${avatarHtml(user, 'tc-avatar-lg')}
+        <div class="min-w-0">
+          <p class="font-semibold text-white truncate">${escapeHtml(user.nombre)}</p>
+          <p class="text-xs text-neutral-500 truncate">${escapeHtml(user.email)}</p>
+        </div>
+      </div>
+      <div class="mt-5 flex flex-col gap-1">
+        <button type="button" class="tc-dropdown-item" data-go="perfil">✏️ Editar perfil</button>
+        <button type="button" class="tc-dropdown-item" data-go="historial">📦 Historial de compras</button>
+        <button type="button" class="tc-dropdown-item hidden" data-install>📲 Instalar la app</button>
+        <div class="tc-divider my-1"></div>
+        <button type="button" class="tc-dropdown-item danger" data-go="logout">↩️ Cerrar sesión</button>
+      </div>
+    </div>`);
+  syncInstallButtons(overlay);
+  overlay.addEventListener('click', (e) => {
+    const go = e.target.closest('[data-go]')?.dataset.go;
+    if (!go) return;
+    close();
+    if (go === 'perfil') openEditProfileModal();
+    else if (go === 'historial') location.hash = '#/compras';
+    else if (go === 'logout') doLogout();
   });
 }
 

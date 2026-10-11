@@ -1,33 +1,56 @@
 // ═══════════════════════════════════════════════════════════════
 // Tech & Chic — vista Tienda
-// Paginación 5-50 por página (arriba y abajo, con número editable),
-// filtros en barra superior (escritorio) o panel deslizante (móvil)
-// y búsqueda difusa que llega desde el buscador del header.
+// Se recorre por departamentos (barra del header) y subdepartamentos
+// (fichas bajo el título). Marca, precio y orden son filtros extra.
+// Todo vive en la URL (#/tienda?dep=…&sub=…&q=…&marca=…&p=…), así
+// cualquier vista se comparte, se recarga o se vuelve con "atrás".
+// Paginación 5-50 por página arriba y abajo (requisito del cliente).
 // ═══════════════════════════════════════════════════════════════
-import { loadCatalog, catalogCategories, catalogBrands } from '../catalog.js';
+import { loadCatalog, catalogCategories, deptIcon } from '../catalog.js';
 import { fuzzySearch } from '../search.js';
 import { productCard } from '../product-card.js';
 import { discountedPrice } from '../pricing.js';
 import { escapeHtml } from '../modals.js';
+import { parseHash, storeHref } from '../route.js';
 
 const PAGE_SIZES = [5, 10, 15, 20, 30, 40, 50];
-
-// Estado persistente de la vista (sobrevive a la navegación interna)
-const state = {
-  query: '',
-  cats: new Set(),      // "Categoría" o "Categoría/Sub"
-  brands: new Set(),
-  priceMin: '',
-  priceMax: '',
-  sort: 'relevance',
-  page: 1,
-  pageSize: Number(localStorage.getItem('tc_page_size')) || 15,
+const SORTS = {
+  relevance: 'Relevancia',
+  priceAsc: 'Precio: menor a mayor',
+  priceDesc: 'Precio: mayor a menor',
+  name: 'Nombre A–Z',
 };
 
-/** El término buscado vive en la URL (#/tienda?q=…): así se puede compartir y volver atrás. */
-function queryFromHash() {
-  const qs = location.hash.split('?')[1] || '';
-  return new URLSearchParams(qs).get('q') || '';
+function storedPageSize() {
+  const n = Number(localStorage.getItem('tc_page_size'));
+  return PAGE_SIZES.includes(n) ? n : 20;
+}
+
+/** Estado completo de la vista leído de la URL. */
+function stateFromHash() {
+  const p = parseHash().params;
+  return {
+    q: p.get('q') || '',
+    dep: p.get('dep') || '',
+    sub: p.get('sub') || '',
+    brands: new Set((p.get('marca') || '').split('|').filter(Boolean)),
+    priceMin: p.get('min') || '',
+    priceMax: p.get('max') || '',
+    sort: SORTS[p.get('orden')] ? p.get('orden') : 'relevance',
+    page: Math.max(1, parseInt(p.get('p')) || 1),
+    pageSize: storedPageSize(),
+  };
+}
+
+function hrefFor(state, overrides = {}) {
+  const s = { ...state, ...overrides };
+  return storeHref({
+    q: s.q, dep: s.dep, sub: s.sub,
+    marca: [...s.brands],
+    min: s.priceMin, max: s.priceMax,
+    orden: s.sort === 'relevance' ? '' : s.sort,
+    p: s.page > 1 ? s.page : '',
+  });
 }
 
 const ICON_FILTER = '<svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" d="M4 6h16M7 12h10m-7 6h4"/></svg>';
@@ -35,43 +58,76 @@ const ICON_CHEV = '<svg class="tc-chev h-3.5 w-3.5" fill="none" stroke="currentC
 const ICON_X = '<svg class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>';
 
 export async function renderStore(view) {
-  view.innerHTML = `
-    <div class="tc-fade-in">
-      <div class="flex flex-col items-start gap-1 mb-6">
-        <h1 class="tc-section-title">Tienda</h1>
-        <div class="tc-title-rule"></div>
-      </div>
-      <div class="flex justify-center py-14"><span class="tc-spinner tc-spinner-lg"></span></div>
-    </div>`;
-
   const cat = await loadCatalog();
   if (!view.isConnected) return;
 
-  const cats = catalogCategories(cat);
-  const brands = catalogBrands(cat);
+  const state = stateFromHash();
+  const depts = catalogCategories(cat);
+  const dept = depts.find(d => d.name === state.dep) || null;
+  if (!dept) { state.dep = ''; state.sub = ''; }
+  else if (!dept.subs.includes(state.sub)) state.sub = '';
 
-  // la búsqueda entra por el header; la URL manda
-  state.query = queryFromHash();
-  state.page = 1;
+  // ── Conjuntos base (se calculan una vez por visita a la vista) ──
+  // 1) catálogo de Tienda (los combos son exclusivos de Inicio)
+  // 2) búsqueda aplicada (si la hay) — ya viene ordenada por relevancia
+  // 3) departamento / subdepartamento
+  const all = cat.products.filter(p => !p.combo);
+  const searched = state.q ? fuzzySearch(all, state.q) : all;
+  const inDept = state.dep ? searched.filter(p => p.category === state.dep) : searched;
+  const scoped = state.sub ? inDept.filter(p => p.subcategory === state.sub) : inDept;
+
+  // marcas disponibles en lo que se está viendo
+  const brandCounts = new Map();
+  scoped.forEach(p => { if (p.brand) brandCounts.set(p.brand, (brandCounts.get(p.brand) || 0) + 1); });
+  const brands = [...brandCounts.keys()].sort((a, b) => a.localeCompare(b, 'es'));
+  for (const b of [...state.brands]) if (!brandCounts.has(b)) state.brands.delete(b);
+
+  // ── Encabezado ──
+  const title = dept ? (state.sub || dept.name) : (state.q ? 'Resultados' : 'Tienda');
+  const crumbs = [];
+  if (dept) crumbs.push(`<a href="${storeHref({ q: state.q })}" class="hover:text-fuchsia-300">${state.q ? 'Todos los resultados' : 'Tienda'}</a>`);
+  if (dept && state.sub) crumbs.push(`<a href="${storeHref({ q: state.q, dep: dept.name })}" class="hover:text-fuchsia-300">${escapeHtml(dept.name)}</a>`);
+
+  // fichas de subdepartamentos (con conteo dentro de la búsqueda actual)
+  const subCount = (s) => inDept.filter(p => p.subcategory === s).length;
+  const subsHtml = dept && dept.subs.length ? `
+    <div class="tc-subbar" role="list">
+      <a href="${storeHref({ q: state.q, dep: dept.name })}" role="listitem" class="tc-sub ${!state.sub ? 'active' : ''}">
+        Todo ${escapeHtml(dept.name)} <span class="tc-sub-n">${inDept.length}</span>
+      </a>
+      ${dept.subs.map(s => {
+        const n = subCount(s);
+        if (!n && state.q) return '';          // en una búsqueda, ocultar los vacíos
+        return `<a href="${storeHref({ q: state.q, dep: dept.name, sub: s })}" role="listitem"
+                   class="tc-sub ${state.sub === s ? 'active' : ''} ${!n ? 'empty' : ''}">
+          ${escapeHtml(s)} <span class="tc-sub-n">${n}</span></a>`;
+      }).join('')}
+    </div>` : '';
 
   const grupoPrecio = () => `
     <div class="flex items-center gap-2">
-      <input data-price-min type="number" min="0" placeholder="Mín" class="tc-input !py-1.5 !text-sm" value="${state.priceMin}" aria-label="Precio mínimo">
+      <input data-price-min type="number" inputmode="numeric" min="0" placeholder="Mín" class="tc-input !py-1.5" value="${escapeHtml(state.priceMin)}" aria-label="Precio mínimo">
       <span class="text-neutral-600">—</span>
-      <input data-price-max type="number" min="0" placeholder="Máx" class="tc-input !py-1.5 !text-sm" value="${state.priceMax}" aria-label="Precio máximo">
+      <input data-price-max type="number" inputmode="numeric" min="0" placeholder="Máx" class="tc-input !py-1.5" value="${escapeHtml(state.priceMax)}" aria-label="Precio máximo">
     </div>`;
 
   view.innerHTML = `
     <div class="tc-fade-in">
-      <div class="flex flex-col items-start gap-1 mb-4">
-        <h1 class="tc-section-title">Tienda</h1>
-        <div class="tc-title-rule"></div>
+      <div class="mb-3">
+        ${crumbs.length ? `<nav class="text-xs text-neutral-500 mb-1 truncate" aria-label="Ruta">${crumbs.join(' <span class="text-neutral-700">›</span> ')}</nav>` : ''}
+        <h1 class="flex items-center gap-2">
+          ${dept ? `<span class="text-2xl" aria-hidden="true">${deptIcon(dept.name)}</span>` : ''}
+          <span class="tc-section-title">${escapeHtml(title)}</span>
+        </h1>
+        ${state.q ? `<p class="mt-1 text-sm text-neutral-400">Buscando <span class="text-white font-medium">“${escapeHtml(state.q)}”</span>${dept ? ` en ${escapeHtml(dept.name)}` : ''}</p>` : ''}
+        <div class="tc-title-rule mt-2"></div>
       </div>
+
+      ${subsHtml}
 
       <!-- ══ Barra de filtros ══ -->
       <div class="tc-filterbar">
         <div class="flex items-center gap-2">
-
           <!-- Móvil: abre el panel -->
           <button type="button" id="stOpenDrawer" class="tc-filter-trigger lg:hidden">
             ${ICON_FILTER}<span>Filtros</span>
@@ -80,16 +136,7 @@ export async function renderStore(view) {
 
           <!-- Escritorio: desplegables en línea -->
           <div class="hidden lg:flex items-center gap-2">
-            <div class="relative">
-              <button type="button" class="tc-filter-trigger" data-pop-btn="cats" aria-expanded="false">
-                <span>Departamentos</span>${ICON_CHEV}
-              </button>
-              <div class="tc-popover hidden" data-pop-panel="cats">
-                <div data-cats class="tc-pop-scroll"></div>
-              </div>
-            </div>
-
-            ${brands.length ? `
+            ${brands.length > 1 ? `
             <div class="relative">
               <button type="button" class="tc-filter-trigger" data-pop-btn="brands" aria-expanded="false">
                 <span>Marca</span>${ICON_CHEV}
@@ -98,7 +145,6 @@ export async function renderStore(view) {
                 <div data-brands class="tc-pop-scroll"></div>
               </div>
             </div>` : ''}
-
             <div class="relative">
               <button type="button" class="tc-filter-trigger" data-pop-btn="price" aria-expanded="false">
                 <span>Precio</span>${ICON_CHEV}
@@ -110,11 +156,8 @@ export async function renderStore(view) {
             </div>
           </div>
 
-          <select id="stSort" class="tc-input tc-select tc-sort-select">
-            <option value="relevance">Orden: relevancia</option>
-            <option value="priceAsc">Precio: menor a mayor</option>
-            <option value="priceDesc">Precio: mayor a menor</option>
-            <option value="name">Nombre A–Z</option>
+          <select id="stSort" class="tc-input tc-select tc-sort-select" aria-label="Ordenar">
+            ${Object.entries(SORTS).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}
           </select>
         </div>
 
@@ -124,11 +167,12 @@ export async function renderStore(view) {
 
       <!-- ══ Resultados ══ -->
       <div id="stTopBar"></div>
-      <div id="stGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 my-4"></div>
+      <div id="stGrid" class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 my-4"></div>
       <div id="stEmpty" class="hidden text-center py-16">
         <p class="text-4xl mb-3">🔍</p>
-        <p class="text-neutral-400 font-medium">No encontramos productos con esos criterios.</p>
-        <p class="text-sm text-neutral-600 mt-1">Prueba con otra palabra o limpia los filtros.</p>
+        <p class="text-neutral-300 font-medium">No encontramos productos con esos criterios.</p>
+        <p class="text-sm text-neutral-500 mt-1" data-empty-hint></p>
+        <div class="mt-5 flex flex-wrap justify-center gap-2" data-empty-actions></div>
       </div>
       <div id="stBottomBar"></div>
     </div>
@@ -145,18 +189,14 @@ export async function renderStore(view) {
         </div>
         <div class="tc-drawer-body">
           <section class="tc-filter-group">
-            <h3 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Departamentos</h3>
-            <div data-cats></div>
-          </section>
-          ${brands.length ? `
-          <section class="tc-filter-group">
-            <h3 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Marca</h3>
-            <div data-brands></div>
-          </section>` : ''}
-          <section>
             <h3 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Precio (₡)</h3>
             ${grupoPrecio()}
           </section>
+          ${brands.length > 1 ? `
+          <section>
+            <h3 class="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Marca</h3>
+            <div data-brands></div>
+          </section>` : ''}
         </div>
         <div class="tc-drawer-foot">
           <button type="button" class="tc-btn-ghost" data-clear>Limpiar</button>
@@ -171,46 +211,36 @@ export async function renderStore(view) {
   const $$ = (s) => [...view.querySelectorAll(s)];
   $('#stSort').value = state.sort;
 
-  // ── Pintado de los filtros (escritorio y móvil comparten estado) ──
-  function paintCats() {
-    const html = cats.map(c => `
-      <div class="mb-1">
-        <div class="tc-filter-option ${state.cats.has(c.name) ? 'selected' : ''}" data-cat="${escapeHtml(c.name)}">
-          <span class="flex-1">${escapeHtml(c.name)}</span>
-          <span class="tc-filter-count">${cat.products.filter(p => p.category === c.name).length}</span>
-        </div>
-        ${c.subs.map(s => {
-          const key = `${c.name}/${s}`;
-          return `<div class="tc-filter-option ml-4 ${state.cats.has(key) ? 'selected' : ''}" data-cat="${escapeHtml(key)}">
-            <span class="flex-1 text-[0.8rem]">${escapeHtml(s)}</span>
-            <span class="tc-filter-count">${cat.products.filter(p => p.category === c.name && p.subcategory === s).length}</span>
-          </div>`;
-        }).join('')}
-      </div>`).join('');
-    $$('[data-cats]').forEach(el => { el.innerHTML = html; });
+  // la barra de departamentos del header muestra cuántos resultados hay en cada uno
+  if (state.q) {
+    const counts = new Map();
+    searched.forEach(p => counts.set(p.category, (counts.get(p.category) || 0) + 1));
+    window.dispatchEvent(new CustomEvent('tc:dept-counts', { detail: counts }));
   }
 
+  /** Refleja el estado en la URL sin crear otra entrada del historial. */
+  function syncUrl() {
+    const href = hrefFor(state);
+    if (location.hash !== href) history.replaceState(history.state, '', href);
+  }
+
+  // ── Pintado de filtros (escritorio y móvil comparten estado) ──
   function paintBrands() {
-    if (!brands.length) return;
     const html = brands.map(b => `
       <label class="tc-filter-option">
         <input type="checkbox" class="tc-check" data-brand value="${escapeHtml(b)}" ${state.brands.has(b) ? 'checked' : ''}>
         <span class="flex-1">${escapeHtml(b)}</span>
-        <span class="tc-filter-count">${cat.products.filter(p => p.brand === b).length}</span>
+        <span class="tc-filter-count">${brandCounts.get(b)}</span>
       </label>`).join('');
     $$('[data-brands]').forEach(el => { el.innerHTML = html; });
   }
 
   function activeCount() {
-    return state.cats.size + state.brands.size
-      + (state.priceMin !== '' ? 1 : 0) + (state.priceMax !== '' ? 1 : 0);
+    return state.brands.size + (state.priceMin !== '' ? 1 : 0) + (state.priceMax !== '' ? 1 : 0);
   }
 
   function paintChips() {
-    const chips = [
-      ...[...state.cats].map(c => ({ tipo: 'cat', valor: c, texto: c.replace('/', ' › ') })),
-      ...[...state.brands].map(b => ({ tipo: 'brand', valor: b, texto: b })),
-    ];
+    const chips = [...state.brands].map(b => ({ tipo: 'brand', valor: b, texto: b }));
     if (state.priceMin !== '') chips.push({ tipo: 'pmin', valor: '', texto: `Desde ₡${state.priceMin}` });
     if (state.priceMax !== '') chips.push({ tipo: 'pmax', valor: '', texto: `Hasta ₡${state.priceMax}` });
 
@@ -221,7 +251,7 @@ export async function renderStore(view) {
           <button type="button" class="tc-chip" data-chip-tipo="${c.tipo}" data-chip-valor="${escapeHtml(c.valor)}">
             ${escapeHtml(c.texto)}${ICON_X}
           </button>`).join('')}
-        <button type="button" class="tc-chip-clear" data-clear>Limpiar todo</button>` : '';
+        <button type="button" class="tc-chip-clear" data-clear>Quitar filtros</button>` : '';
     });
 
     const n = activeCount();
@@ -231,38 +261,24 @@ export async function renderStore(view) {
     });
   }
 
-  paintCats();
   paintBrands();
 
   // ── Interacción de filtros (delegada: sirve para las dos copias) ──
   view.addEventListener('click', (e) => {
-    const opt = e.target.closest('[data-cat]');
-    if (opt) {
-      const key = opt.dataset.cat;
-      if (state.cats.has(key)) state.cats.delete(key);
-      else state.cats.add(key);
-      state.page = 1;
-      paintCats();
-      update();
-      return;
-    }
-
     const chip = e.target.closest('[data-chip-tipo]');
     if (chip) {
       const { chipTipo: tipo, chipValor: valor } = chip.dataset;
-      if (tipo === 'cat') state.cats.delete(valor);
-      else if (tipo === 'brand') state.brands.delete(valor);
+      if (tipo === 'brand') state.brands.delete(valor);
       else if (tipo === 'pmin') state.priceMin = '';
       else if (tipo === 'pmax') state.priceMax = '';
       state.page = 1;
       $$('[data-price-min]').forEach(i => { i.value = state.priceMin; });
       $$('[data-price-max]').forEach(i => { i.value = state.priceMax; });
-      paintCats(); paintBrands();
+      paintBrands();
       update();
       return;
     }
-
-    if (e.target.closest('[data-clear]')) clearAll();
+    if (e.target.closest('[data-clear]')) clearFilters();
   });
 
   view.addEventListener('change', (e) => {
@@ -291,17 +307,13 @@ export async function renderStore(view) {
     }, 350);
   });
 
-  $('#stSort').addEventListener('change', (e) => { state.sort = e.target.value; update(); });
+  $('#stSort').addEventListener('change', (e) => { state.sort = e.target.value; state.page = 1; update(); });
 
-  function clearAll() {
-    state.cats.clear(); state.brands.clear();
+  function clearFilters() {
+    state.brands.clear();
     state.priceMin = ''; state.priceMax = ''; state.page = 1;
-    closeDrawer();
-    // si hay búsqueda en la URL, limpiarla también (eso dispara un render nuevo)
-    if (queryFromHash()) { location.hash = '#/tienda'; return; }
-    $$('[data-price-min]').forEach(i => { i.value = ''; });
-    $$('[data-price-max]').forEach(i => { i.value = ''; });
-    paintCats(); paintBrands();
+    $$('[data-price-min], [data-price-max]').forEach(i => { i.value = ''; });
+    paintBrands();
     update();
   }
 
@@ -361,15 +373,7 @@ export async function renderStore(view) {
 
   // ── Filtrado + render ──
   function filtered() {
-    // los combos son exclusivos de la portada (Inicio), no salen en Tienda
-    let list = cat.products.filter(p => !p.combo);
-
-    if (state.cats.size) {
-      list = list.filter(p => {
-        if (state.cats.has(p.category)) return true;
-        return p.subcategory && state.cats.has(`${p.category}/${p.subcategory}`);
-      });
-    }
+    let list = scoped;
     if (state.brands.size) list = list.filter(p => state.brands.has(p.brand));
 
     const min = Number(state.priceMin);
@@ -377,16 +381,15 @@ export async function renderStore(view) {
     if (state.priceMin !== '' && !Number.isNaN(min)) list = list.filter(p => discountedPrice(p.price, p.discountPct) >= min);
     if (state.priceMax !== '' && !Number.isNaN(max) && max > 0) list = list.filter(p => discountedPrice(p.price, p.discountPct) <= max);
 
-    list = fuzzySearch(list, state.query); // ya ordena por relevancia
-
+    list = list.slice();
     if (state.sort === 'priceAsc') list.sort((a, b) => discountedPrice(a.price, a.discountPct) - discountedPrice(b.price, b.discountPct));
     else if (state.sort === 'priceDesc') list.sort((a, b) => discountedPrice(b.price, b.discountPct) - discountedPrice(a.price, a.discountPct));
     else if (state.sort === 'name') list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
-
     return list;
   }
 
-  function paginationBar(list, totalPages) {
+  /** Arriba (compacta en el celular) y abajo (completa). */
+  function paginationBar(list, totalPages, { top }) {
     const start = list.length ? (state.page - 1) * state.pageSize + 1 : 0;
     const end = Math.min(list.length, state.page * state.pageSize);
 
@@ -396,30 +399,30 @@ export async function renderStore(view) {
     let numsHtml = '';
     let prev = 0;
     for (const n of pages) {
-      if (n - prev > 1) numsHtml += `<span class="text-neutral-600 px-1">…</span>`;
+      if (n - prev > 1) numsHtml += `<span class="text-neutral-600 px-0.5">…</span>`;
       numsHtml += `<button type="button" class="tc-page-btn ${n === state.page ? 'current' : ''}" data-page="${n}">${n}</button>`;
       prev = n;
     }
 
     const bar = document.createElement('div');
-    bar.className = 'flex flex-wrap items-center justify-between gap-3 py-1';
+    bar.className = 'tc-pagebar';
     bar.innerHTML = `
       <div class="flex items-center gap-2 text-sm text-neutral-500">
-        <span class="hidden sm:inline">Mostrar</span>
-        <select data-size class="tc-input tc-select !w-auto !py-1.5 !text-sm">
+        <select data-size class="tc-input tc-select !w-auto !py-1.5" aria-label="Productos por página">
           ${PAGE_SIZES.map(n => `<option value="${n}" ${n === state.pageSize ? 'selected' : ''}>${n}</option>`).join('')}
         </select>
         <span class="hidden sm:inline">por página</span>
-        <span class="ml-2 text-neutral-600">${start}–${end} de ${list.length}</span>
+        <span class="ml-1 text-neutral-500 whitespace-nowrap">${start}–${end} de ${list.length}</span>
       </div>
-      <div class="flex items-center gap-1">
+      ${totalPages > 1 ? `
+      <div class="${top ? 'hidden sm:flex' : 'flex'} items-center gap-1">
         <button type="button" class="tc-page-btn" data-page="${state.page - 1}" ${state.page <= 1 ? 'disabled' : ''} aria-label="Anterior">‹</button>
         ${numsHtml}
         <button type="button" class="tc-page-btn" data-page="${state.page + 1}" ${state.page >= totalPages ? 'disabled' : ''} aria-label="Siguiente">›</button>
-        <span class="ml-2 text-xs text-neutral-600 hidden sm:inline">Ir a</span>
-        <input data-goto type="number" min="1" max="${totalPages}" value="${state.page}"
-          class="tc-input !w-16 !py-1.5 !text-sm text-center" aria-label="Número de página">
-      </div>`;
+        <span class="ml-2 text-xs text-neutral-600 hidden md:inline">Ir a</span>
+        <input data-goto type="number" inputmode="numeric" min="1" max="${totalPages}" value="${state.page}"
+          class="tc-input !w-14 !py-1.5 text-center hidden md:block" aria-label="Número de página">
+      </div>` : ''}`;
 
     bar.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-page]');
@@ -433,11 +436,22 @@ export async function renderStore(view) {
       state.page = 1;
       update(true);
     });
-    bar.querySelector('[data-goto]').addEventListener('change', (e) => {
+    bar.querySelector('[data-goto]')?.addEventListener('change', (e) => {
       const p = Math.max(1, Math.min(totalPages, Number(e.target.value) || 1));
       if (p !== state.page) { state.page = p; update(true); }
     });
     return bar;
+  }
+
+  function paintEmpty() {
+    const actions = [];
+    if (activeCount()) actions.push(`<button type="button" class="tc-btn-secondary !py-2 !text-sm" data-clear>Quitar filtros</button>`);
+    if (state.q && state.dep) actions.push(`<a href="${storeHref({ q: state.q })}" class="tc-btn-secondary !py-2 !text-sm">Buscar en todos los departamentos</a>`);
+    if (state.q) actions.push(`<a href="${state.dep ? storeHref({ dep: state.dep }) : '#/tienda'}" class="tc-btn-ghost !text-sm">Ver ${state.dep ? `todo ${escapeHtml(state.dep)}` : 'toda la tienda'}</a>`);
+    $('[data-empty-actions]').innerHTML = actions.join('');
+    $('[data-empty-hint]').textContent = state.q
+      ? 'Prueba con otra palabra, revisa la ortografía o busca en todos los departamentos.'
+      : 'Prueba quitando algún filtro.';
   }
 
   function update(scrollTop = false) {
@@ -448,20 +462,29 @@ export async function renderStore(view) {
     const grid = $('#stGrid');
     const empty = $('#stEmpty');
     grid.innerHTML = '';
-    const pageItems = list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize);
-    pageItems.forEach(p => grid.appendChild(productCard(p)));
+    const frag = document.createDocumentFragment();
+    list.slice((state.page - 1) * state.pageSize, state.page * state.pageSize)
+      .forEach(p => frag.appendChild(productCard(p)));
+    grid.appendChild(frag);
     empty.classList.toggle('hidden', list.length > 0);
+    if (!list.length) paintEmpty();
 
     const top = $('#stTopBar'); const bottom = $('#stBottomBar');
     top.innerHTML = ''; bottom.innerHTML = '';
     if (list.length) {
-      top.appendChild(paginationBar(list, totalPages));
-      bottom.appendChild(paginationBar(list, totalPages));
+      top.appendChild(paginationBar(list, totalPages, { top: true }));
+      if (totalPages > 1) bottom.appendChild(paginationBar(list, totalPages, { top: false }));
     }
 
     paintChips();
     $$('[data-results]').forEach(el => { el.textContent = String(list.length); });
-    if (scrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
+    syncUrl();
+    if (scrollTop) {
+      // al cambiar de página se vuelve al inicio de los resultados, no al tope de la página
+      const y = $('#stTopBar').getBoundingClientRect().top + window.scrollY
+        - (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tc-header-h')) || 0) - 70;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    }
   }
 
   update();
